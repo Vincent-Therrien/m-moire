@@ -1,0 +1,157 @@
+\chapter{État de l'art}
+\label{chapitre:1}
+
+\section{Séquençage d'ADN}
+Les technologies de séquençage servent à obtenir des séquences de
+caractères qui indiquent la structure de molécules d'ADN or d'ARN. Le tableau
+\ref{tableau:techniques_de_sequencage} présente quelques technologies de
+séquençage d'ADN \cite{satam2023}.
+
+\begin{table}[hbt!]
+    \centering
+    \begin{tabular}{lp{0.16\linewidth}p{0.13\linewidth}p{0.42\linewidth}}
+\hline
+Nom de la technologie & Principe de séquençage & Longueur des séquences & Limites \\
+\hline
+454 pyrosequencing & Synthèse & $400$ à $1000$ & Peut contenir des erreurs de délition et insertion \\
+Ion Torrent & Synthèse & $200$ à $300$ & Perte de signal lors du séquençage d'homopolymères \\
+Illumina & Synthèse & $36$ à $300$ & Taux d'erreur de séquençage jusqu'à $1\%$ dans certains cas. \\
+SOLiD & Ligation & $75$ & Erreurs de substitution et sous-représentation des régions riches en GC \\
+PacBio SMRT & Synthèse & $10k$ à $25k$ & Coût élevé comparé aux autres méthodes \\
+Oxford Nanopore & Détection d'impédance & $10k$ à $30k$ & Taux d'erreur de séquençage jusqu'à $15\%$ dans certains cas. \\
+\hline
+    \end{tabular}
+    \caption{Survol de technologies de séquençage d'ADN}
+    \label{tableau:techniques_de_sequencage}
+\end{table}
+
+Il est nécessaire de suivre un protocole expérimental pour séquencer correctement
+du matériel génétique. Navguire et al \cite{Navgire2022} présentent les étapes
+fondamentales suivantes d'un tel protocole :
+
+\begin{enumerate}
+    \item \textbf{Collecte d'échantillon} : Le matériel génétique est prélevé
+        dans un environnement à un instant donné et sous des conditions
+        spécifiques. Par exemple, le métagénome de la rhizosphère d'une plante
+        peut être échantillonné à une étape précise de son développement et le
+        microbiome fécal humain peut être échantillonné un temps défini après
+        l'administration d'un vaccin à un patient.
+    \item \textbf{Isolation de l'ADN} : L'échantillon est traité en vue du
+        séquençage, par exemple, en ajoutant des réactifs pour provoquer la
+        lyse des cellules et libérer leur matériel génétique. Le processus exact 
+        d'isolation de l'ADN dépend du type d'échantillon et doit préserver le
+        maximum de diversité dans l'échantillon pour éviter de déformer l'abondance
+        de certains organismes.
+    \item \textbf{Préparation de la bibliothèque} : L'ADN isolé est adapté à
+        une technologie de séquençage particulière, ce qui mène à la création
+        d'une bibliothèque de fragments d'ADN. À la fin de cette étapes, les
+        fragments d'ADN ont des longueurs similaires et comprennent des adapteurs
+        connus aux extrémités $5'$ et $3'$.
+    \item \textbf{Séquençage} : La bibliothèque est traitée par une technologie
+        de séquençage, qui génère des fichiers contenant les lectures des
+        fragments d'ADN. Les données de lecture peuvent ensuite être utilisées
+        pour réaliser une analyse de la composition de l'échantillon. Le
+        séquençage peut prendre quelques minutes pour de petites bibliothèques
+        avec certaines technologies de séquençage comme Oxford Nanopore mais
+        prend généralement plusieurs heures, voire plusieurs jours \cite{roy2024}.
+\end{enumerate}
+
+Il existe deux approches principales pour l 'étape 3 (préparation de la
+bibliothèque). Dans le cadre d'une analyse métagénomique \textbf{basée sur
+les gènes marqueurs} (\textit{marker-gene metagenomics}), des régions spécifiques
+des métagénomes sont amplifiées et séquencées. Ces régions sont sélectionnées
+en fonction de leur capacité à identifier des espèces spécifiques. Par exemple,
+les gènes d'ARN ribosomique 16S ont tendance à être conservés au cours de l'évolution
+et peuvent être utilisés pour identifier des espèces de bactéries. Toutefois, puisque
+les gènes peuvent être transférés entre certains organismes et que les gènes marqueurs
+sont relativement courts, cette approche, bien que peu dispendieuse, est limitée
+à une faible sensitivité \cite{Matchado2024}. Une variante de cette approche
+consiste à utiliser des séquences plus longues que les gènes marqueurs seuls, ce
+qui peut améliorer les performances \cite{BenitezPaez2022}. La seconde approche
+de préparation d'une bibliothèque est le \textbf{séquençage complet du génome}
+(\textit{whole genome sequencing}), qui consiste à séquencer tous les fragments
+présents dans l'échantillon. Cette approche est plus dispendieuse parce qu'elle
+requiert le séquençage d'un volume beaucoup plus grand de matériel génétique, mais
+elle permet des analyses métagénomiques plus poussées parce que davantage de données
+sont disponibles. Un désavantage de cette approche est sa sensibilité à l'ADN
+dominant dans un échantillon; par exemple, dans un échantillon de microbiome
+humain, l'ADN humain peut être surreprésenté et rendre l'ADN microbien plus
+difficile à analyser \cite{Matchado2024}. Ce phénomène est moins susceptible de
+survenir dans les analyses basées sur les gènes marqueurs parce que l'ADN humain
+ne comprend pas les séquences cibles.
+
+\section{Analyse des séquences}
+Les analyses métagénomiques se divisent en deux principaux types.
+
+\subsection{Analyses taxonomiques}
+Les analyses taxonomiques consistent à comparer les lectures d'ADN à des bases de
+données de référence pour identifier les organismes présents dans un échantillon
+\cite{Navgire2022}. Plus particulièrement, le profilage vise à estimer l'abondance
+relative des organismes présents dans un échantillon et la classification, à
+identifier le plus précisément possible les espèces présentes dans un échantillon.
+La classification peut être effectuée avec des lectures ou encore avec des contigs
+élaborées à partir des lectures brutes. En général, les analyses taxonomiques
+s'appuient généralement sur les séquences d'ADN seules et n'utilisent pas
+d'annotations fonctionnelles. Les analyses taxonomiques peuvent s'appuyer sur
+plusieurs outils.
+
+\subsubsection{Kraken2}
+\cite{kraken}
+
+\subsubsection{bracken}
+\cite{bracken}
+
+\subsubsection{MetaPhlAn3}
+\cite{metaphlan3}
+
+\subsubsection{mOTUs3}
+\cite{motus}
+
+\subsubsection{sourmash}
+\cite{sourmash}
+
+\subsubsection{Centrifuge}
+\cite{centrifuge}
+
+\subsubsection{MetaMaps}
+\cite{metamaps}
+
+\subsubsection{MMSeqs2}
+\cite{mmseqs2}
+
+\subsubsection{BugSeq}
+\cite{bugseq}
+
+\subsubsection{MEGAN-LR}
+\cite{meganlr}
+
+\subsection{Analyses fonctionnelles}
+Les analyses fonctionnelles consistent à étudier des fonctions particulières,
+comme les gènes de résistance aux antimicrobiens \cite{Navgire2022}. Elles se
+divisent en deux étapes. La prédiction de gènes sert à déterminer quelles
+séquences d'ADN correspondent à un gène d'intérêt et l'annotation fonctionnelle,
+à y assigner une fonction particulière. Les analyses fonctionnelles s'appuient
+sur les séquences mais aussi sur des bases de données qui décrivent les fonctions
+de gènes.
+
+\subsubsection{Blast}
+\cite{blast}
+
+\subsubsection{DIAMOND}
+\cite{diamond}
+
+\subsubsection{HMMER}
+\cite{hmmer}
+
+\subsubsection{MMSeqs2}
+\cite{mmseqs2}
+
+\section{Bases de données}
+
+\section{Réseaux neuronaux}
+
+\subsection{Principes de base des réseaux neuronaux}
+
+\subsection{Architectures de réseaux neuronaux}
+
+\subsection{Application à la classification taxonomique}
