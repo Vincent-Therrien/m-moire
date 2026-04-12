@@ -38,7 +38,7 @@ fondamentales suivantes d'un tel protocole :
         l'administration d'un vaccin à un patient.
     \item \textbf{Isolation de l'ADN} : L'échantillon est traité en vue du
         séquençage, par exemple, en ajoutant des réactifs pour provoquer la
-        lyse des cellules et libérer leur matériel génétique. Le processus exact 
+        lyse des cellules et libérer leur matériel génétique. Le processus exact
         d'isolation de l'ADN dépend du type d'échantillon et doit préserver le
         maximum de diversité dans l'échantillon pour éviter de déformer l'abondance
         de certains organismes.
@@ -56,47 +56,68 @@ fondamentales suivantes d'un tel protocole :
         prend généralement plusieurs heures, voire plusieurs jours \cite{roy2024}.
 \end{enumerate}
 
-Il existe deux approches principales pour l 'étape 3 (préparation de la
-bibliothèque). Dans le cadre d'une analyse métagénomique \textbf{basée sur
-les gènes marqueurs} (\textit{marker-gene metagenomics}), des régions spécifiques
-des métagénomes sont amplifiées et séquencées. Ces régions sont sélectionnées
-en fonction de leur capacité à identifier des espèces spécifiques. Par exemple,
-les gènes d'ARN ribosomique 16S ont tendance à être conservés au cours de l'évolution
-et peuvent être utilisés pour identifier des espèces de bactéries. Toutefois, puisque
-les gènes peuvent être transférés entre certains organismes et que les gènes marqueurs
-sont relativement courts, cette approche, bien que peu dispendieuse, est limitée
-à une faible sensitivité \cite{Matchado2024}. Une variante de cette approche
-consiste à utiliser des séquences plus longues que les gènes marqueurs seuls, ce
-qui peut améliorer les performances \cite{BenitezPaez2022}. La seconde approche
-de préparation d'une bibliothèque est le \textbf{séquençage complet du génome}
-(\textit{whole genome sequencing}), qui consiste à séquencer tous les fragments
-présents dans l'échantillon. Cette approche est plus dispendieuse parce qu'elle
-requiert le séquençage d'un volume beaucoup plus grand de matériel génétique, mais
-elle permet des analyses métagénomiques plus poussées parce que davantage de données
-sont disponibles. Un désavantage de cette approche est sa sensibilité à l'ADN
-dominant dans un échantillon; par exemple, dans un échantillon de microbiome
-humain, l'ADN humain peut être surreprésenté et rendre l'ADN microbien plus
-difficile à analyser \cite{Matchado2024}. Ce phénomène est moins susceptible de
-survenir dans les analyses basées sur les gènes marqueurs parce que l'ADN humain
-ne comprend pas les séquences cibles.
+Il existe deux approches principales pour l 'étape 3 (préparation de la bibliothèque). Dans le cadre
+d'une analyse métagénomique \textbf{basée sur les gènes marqueurs} (\textit{marker-gene
+metagenomics}), des régions spécifiques des métagénomes sont amplifiées et séquencées. Ces régions
+sont sélectionnées en fonction de leur capacité à identifier des espèces spécifiques. Par exemple,
+les gènes d'ARN ribosomique 16S ont tendance à être conservés au cours de l'évolution et peuvent
+être utilisés pour identifier des espèces de bactéries. Toutefois, puisque les gènes peuvent être
+transférés entre certains organismes et que les gènes marqueurs sont relativement courts, cette
+approche, bien que peu dispendieuse, est limitée à une faible sensitivité \cite{Matchado2024}. Une
+variante de cette approche consiste à utiliser des séquences plus longues que les gènes marqueurs
+seuls, ce qui peut améliorer les performances \cite{BenitezPaez2022}. La seconde approche de
+préparation d'une bibliothèque est le \textbf{séquençage complet du génome} (\textit{whole genome
+sequencing}), qui consiste à séquencer tous les fragments présents dans l'échantillon. Cette
+approche est plus dispendieuse parce qu'elle requiert le séquençage d'un volume beaucoup plus grand
+de matériel génétique, mais elle permet des analyses métagénomiques plus poussées parce que
+davantage de données sont disponibles. Un désavantage de cette approche est sa sensibilité à l'ADN
+dominant dans un échantillon; par exemple, dans un échantillon de microbiome humain, l'ADN humain
+peut être surreprésenté et rendre l'ADN microbien plus difficile à analyser \cite{Matchado2024}. Ce
+phénomène est moins susceptible de survenir dans les analyses basées sur les gènes marqueurs parce
+que l'ADN humain ne comprend pas les séquences cibles.
 
 \section{Analyse des séquences}
 Les analyses métagénomiques se divisent en deux principaux types.
 
 \subsection{Analyses taxonomiques}
-Les analyses taxonomiques consistent à comparer les lectures d'ADN à des bases de
-données de référence pour identifier les organismes présents dans un échantillon
-\cite{Navgire2022}. Plus particulièrement, le profilage vise à estimer l'abondance
-relative des organismes présents dans un échantillon et la classification, à
-identifier le plus précisément possible les espèces présentes dans un échantillon.
-La classification peut être effectuée avec des lectures ou encore avec des contigs
-élaborées à partir des lectures brutes. En général, les analyses taxonomiques
-s'appuient généralement sur les séquences d'ADN seules et n'utilisent pas
-d'annotations fonctionnelles. Les analyses taxonomiques peuvent s'appuyer sur
-plusieurs outils.
+Les analyses taxonomiques consistent à comparer les lectures d'ADN à des bases de données de
+référence pour identifier les organismes présents dans un échantillon \cite{Navgire2022}. Plus
+particulièrement, le profilage vise à estimer l'abondance relative des organismes présents dans un
+échantillon et la classification, à identifier le plus précisément possible les espèces présentes
+dans un échantillon. La classification peut être effectuée avec des lectures ou encore avec des
+contigs élaborées à partir des lectures brutes. En général, les analyses taxonomiques s'appuient
+généralement sur les séquences d'ADN seules et n'utilisent pas d'annotations fonctionnelles. Les
+analyses taxonomiques peuvent s'appuyer sur plusieurs outils.
 
 \subsubsection{Kraken2}
-\cite{kraken}
+Kraken \cite{kraken} est une suite d'outils de classification, quantification et visualisation
+métagénomique. La suite inclut quatre versions du logiciel :
+
+\begin{list}{$\bullet$}{}
+    \item \textbf{Kraken} classifie les lectures d'ADN à partir d'une base de données de K-mers en
+        prenant, en général, $K = 31$. Les K-mers de l'échantillon sont comparés à la base de
+        données pour identifier des correspondances exactes et déterminer le cénancêtre des génomes
+        qui contiennent les mêmes K-mers. L'avantage de cet algorithme est que même si une espèce
+        présente dans l'échantillon n'est pas représentée dans la base de donnée, il est possible
+        de lui assigner groupe taxonomique plus général (ex. la famille au lieu du genre).
+        Néanmoins, comme Kraken emmagasine des K-mers entier, il requiert beaucoup de mémoire et
+        offre de faibles performances.
+    \item \textbf{KrakenUniq} est une variante de Kraken qui distingue (1) les correspondances entre
+        les lectures de l'échantillon avec la base de données et (2) les correspondances uniques de
+        K-mers. Cela lui permet de consider la couverture de plusieurs régions différentes des
+        génomes de référence et évite les biais en faveur des régions hautement conservées, mais
+        augmente la quantité de mémoire à utiliser.
+    \item \textbf{Kraken 2} modifie l'algorithme original de Kraken pour utiliser une correspondance
+        statistique entre les lectures et la base de données au lieu de correspondances exactes, ce
+        qui entraîne deux bénéfices : (1) Kraken 2 emmagasine un sous-ensemble de K-mers, ce qui
+        diminue la taille de la base de données de $85\%$, et (2) Kraken 2 est plus résilient aux
+        erreurs de séquençages et aux indels. Cette variante est recommandée pour les analyses de
+        microbiome.
+    \item \textbf{Kraken2Uniq} combine les correspondances statistiques de Kraken 2 et le traçage
+        de régions distinctes de KrakenUniq. Cette variante est recommandée pour l'identification de
+        pathogènes parce qu'elle s'avère plus sensible à des espèces précises mais requiert des
+        ressources informatiques plus grandes.
+\end{list}
 
 \subsubsection{bracken}
 \cite{bracken}
