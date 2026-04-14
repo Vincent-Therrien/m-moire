@@ -99,52 +99,107 @@ métagénomique. La suite inclut quatre versions du logiciel :
         données pour identifier des correspondances exactes et déterminer le cénancêtre des génomes
         qui contiennent les mêmes K-mers. L'avantage de cet algorithme est que même si une espèce
         présente dans l'échantillon n'est pas représentée dans la base de donnée, il est possible
-        de lui assigner groupe taxonomique plus général (ex. la famille au lieu du genre).
+        de lui assigner groupe taxonomique plus général (ex. la famille au lieu du genre) \cite{kraken1}.
         Néanmoins, comme Kraken emmagasine des K-mers entier, il requiert beaucoup de mémoire et
-        offre de faibles performances.
+        offre de faibles performances \cite{kraken}.
     \item \textbf{KrakenUniq} est une variante de Kraken qui distingue (1) les correspondances entre
         les lectures de l'échantillon avec la base de données et (2) les correspondances uniques de
         K-mers. Cela lui permet de consider la couverture de plusieurs régions différentes des
         génomes de référence et évite les biais en faveur des régions hautement conservées, mais
-        augmente la quantité de mémoire à utiliser.
+        augmente la quantité de mémoire à utiliser \cite{kraken}.
     \item \textbf{Kraken 2} modifie l'algorithme original de Kraken pour utiliser une correspondance
         statistique entre les lectures et la base de données au lieu de correspondances exactes, ce
         qui entraîne deux bénéfices : (1) Kraken 2 emmagasine un sous-ensemble de K-mers, ce qui
         diminue la taille de la base de données de $85\%$, et (2) Kraken 2 est plus résilient aux
         erreurs de séquençages et aux indels. Cette variante est recommandée pour les analyses de
-        microbiome.
+        microbiome \cite{kraken}.
     \item \textbf{Kraken2Uniq} combine les correspondances statistiques de Kraken 2 et le traçage
         de régions distinctes de KrakenUniq. Cette variante est recommandée pour l'identification de
         pathogènes parce qu'elle s'avère plus sensible à des espèces précises mais requiert des
-        ressources informatiques plus grandes.
+        ressources informatiques plus grandes \cite{kraken}.
 \end{list}
 
-\subsubsection{bracken}
-\cite{bracken}
+La suite logicielle Kraken contient par ailleurs KrakenTools et Pavian, des outils d'analyse
+statistique et de visualisation des résultats. Des outils tiers sont généralement requis pour
+réaliser une analyse complète. Par exemple, avec de courtes lectures d'ADN produites par des
+appareils de la plateforme Illumina ($100$ à $250$ nucléotide par lecture), il est d'abord
+nécessaire de former des contigs avec un logiciel comme Bowtie \cite{kraken}.
 
-\subsubsection{MetaPhlAn3}
-\cite{metaphlan3}
+\subsubsection{bracken}
+Bracken \cite{bracken} est un logiciel de profilage taxonomique basé sur Kraken.
+Kraken n'est pas conçu pour mesurer les abondances relatives de groupes taxonomiques présents dans
+un échantillon; il sert plutôt à identifier des espèces précises. Comme plusieurs séquences d'ADN
+sont communes à plusieurs espèces à cause de régions hautement conservées ou de transferts
+horizontaux, Kraken assigne aux lectures correspondantes des taxons génériques, ce qui rend les
+résultats impropres à une analyse d'abondance. Bracken modifie les résultats de Kraken en
+redistribuant les lectures à travers un arbre phylogénétique par une méthode probabiliste, ce qui
+les rend apte à une analyse d'abondances.
+
+\subsubsection{MetaPhlAn 3}
+MetaPhlAn 3 \cite{metaphlan3} est un logiciel de classification taxonomique qui utilise une approche
+basée sur les gènes spécifiques à des clades, c'est-à-dire des gènes qui se trouvent universellement
+dans un groupe taxonomique donné et qui sont universellement absents à l'extérieur de ce groupe. Au
+lieu d'indexer des génomes entiers, MetaPhlAn 3 aligne uniquement les gènes marqueurs avec une base
+de données de référence d'environ $1,1$ millions de gènes en utilisant Bowtie. Cette approche permet
+d'assigner avec une grande précision les lectures contenant des gènes marqueurs à un groupe
+taxonomique, mais les lectures ne comprenant pas de tels gènes (la majorité des lectures, dans la
+plupart des cas) ne peuvent pas être assigné à un taxon.
 
 \subsubsection{mOTUs3}
-\cite{motus}
+mOTUs3 \cite{motus} est un logiciel de classification taxonomique qui utilise des gènes marqueurs
+métagénomiques. Ces marqueurs sont définis d'une manière similaire à la base de données utilisée par
+MetaPhlAn 3, mais au lieu d'être générés exclusivement à partir de génomes de référence, ils sont
+aussi générés à partir de métagénomes assemblés. Cela permet à mOTUs3 de regrouper des lectures dans
+des groupes taxonomiques qui n'ont pas de génome de référence officiel (dans un tel cas, Kraken 2
+leur assigne un groupe taxonomique plus élevé et MetaPhlAn 3 ne peut pas faire de classification).
 
 \subsubsection{sourmash}
-\cite{sourmash}
+Sourmash \cite{sourmash} est un logiciel de profilage taxonomique qui estime les abondances de
+groupes taxonomiques en comparant des jeux de données compressés. Le logiciel est basé sur
+l'algorithme de compression avec pertes FracMinHash, qui préserve un sous-ensemble restreint des
+K-mers présents dans les lectures d'ADN nommé signature. Des signatures peuvent être comparées par
+similarité de Jaccard sans effectuer de comparaisons intensives des séquences afin d'estimer les
+compositions taxonomiques d'échantillons.
 
 \subsubsection{Centrifuge}
-\cite{centrifuge}
+Centrifuge \cite{centrifuge} est un logiciel de classification taxonomique qui utilise la
+transformation de Burrows-Wheeler pour créer une base de données optimisée pour la recherche de
+séquences et l'indice de Ferragina-Manzini pour optimiser la recherche. Au lieu d'effectuer des
+correspondances avec des K-mers d'une longueur prédéfinie comme Kraken 2, Centrifuge recherche les
+correspondances les plus longues possibles entre les lectures séquencées et la base de données de
+référence.
 
 \subsubsection{MetaMaps}
-\cite{metamaps}
+MetaMaps \cite{metamaps} est un logiciel de classification taxonomique spécialisé pour les longues
+séquences. Il fonctionne en deux étapes. MetaMaps utilise d'abord un algorithme de mappage basé sur
+la minimisation pour approximer les endroits dans une base de données de référence où les lectures
+pourraient avoir des correspondances. Ensuite, il utilise un algorithme d'espérance-maximisation
+pour évaluer la qualité des correspondances potentielles et identifier les taxons d'où proviennent
+les lectures.
 
 \subsubsection{MMSeqs2}
-\cite{mmseqs2}
+MMSeqs2 \cite{mmseqs2} est une suite logicielle conçue pour la recherche et le groupement rapide
+dans les bases de données de protéines et de nucléotides. Il utilise trois étapes pour effectuer des
+alignements efficacement : (1) pré-filtrage des correspondances potentielles par K-mers, (2)
+alignements sans indels et (3) alignement avec indels de Smith-Waterman. Le module MMSeqs2 Taxonomy
+permet d'effectuer des classifications taxonomiques en traduisant les lectures d'ADN selon les six
+cadres de lecture et en comparant des séquences d'acides aminés. Cette approche permet de
+reconnaître des liens évolutifs entre des séquences qui ont divergé au niveau des séquences de
+nucléotides mais qui ont conservé la même structure de protéine, ce qui constitue un avantage qui
+n'est pas accessible aux techniques précédemment présentées.
 
 \subsubsection{BugSeq}
-\cite{bugseq}
+BugSeq \cite{bugseq} est un logiciel de classification taxonomique spécialisé pour les lectures
+nanopores (c-à-d longues séquences). Il combine des outils d'alignement de lectures et de recherche
+de cénancêtre basé sur un processus bayésien. Contrairement aux autres outils, qui sont livrés
+comme des programmes autonomes, BugSeq est un pipeline qui cascade plusieurs logiciels.
 
-\subsubsection{MEGAN-LR}
-\cite{meganlr}
+\subsubsection{MEGAN et MEGAN-LR}
+MEGAN et MEGAN-RL \cite{meganlr} sont des logiciels d'analyse de métagénome respectivement conçus
+pour les analyses des lectures courtes et longues. Un peu comme MMSeqs2, ces outils sont basés sur
+une analyse de séquences de protéines traduites à partir des cadres de lecture des séquences de
+nucléotides. Un aspect important de MEGAN est sa capacité à corriger les décalage dans les cadres
+de lecture pour permettre de corriger les séquences de protéines malgré les indels.
 
 \subsection{Analyses fonctionnelles}
 Les analyses fonctionnelles consistent à étudier des fonctions particulières,
