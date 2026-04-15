@@ -77,7 +77,8 @@ phénomène est moins susceptible de survenir dans les analyses basées sur les 
 que l'ADN humain ne comprend pas les séquences cibles.
 
 \section{Analyse des séquences}
-Les analyses métagénomiques se divisent en deux principaux types.
+Les analyses métagénomiques se divisent en deux principaux types : les analyses taxonomiques et
+les analyses fonctionnelles.
 
 \subsection{Analyses taxonomiques}
 Les analyses taxonomiques consistent à comparer les lectures d'ADN à des bases de données de
@@ -202,27 +203,37 @@ nucléotides. Un aspect important de MEGAN est sa capacité à corriger les déc
 de lecture pour permettre de corriger les séquences de protéines malgré les indels.
 
 \subsection{Analyses fonctionnelles}
-Les analyses fonctionnelles consistent à étudier des fonctions particulières,
-comme les gènes de résistance aux antimicrobiens \cite{Navgire2022}. Elles se
-divisent en deux étapes. La prédiction de gènes sert à déterminer quelles
-séquences d'ADN correspondent à un gène d'intérêt et l'annotation fonctionnelle,
-à y assigner une fonction particulière. Les analyses fonctionnelles s'appuient
-sur les séquences mais aussi sur des bases de données qui décrivent les fonctions
-de gènes.
+Les analyses fonctionnelles consistent à étudier des fonctions particulières, comme les gènes de
+résistance aux antimicrobiens \cite{Navgire2022}. Elles se divisent en deux étapes. La prédiction de
+gènes sert à déterminer quelles séquences d'ADN correspondent à un gène d'intérêt et l'annotation
+fonctionnelle, à y assigner une fonction particulière. Les analyses fonctionnelles s'appuient sur
+les séquences mais aussi sur des bases de données qui décrivent les fonctions de gènes. Comme ce
+mémoire se concentre sur les techniques de classification taxonomique, ces techniques sont ici
+présentées brièvement.
 
-\subsubsection{Blast}
-\cite{blast}
-
-\subsubsection{DIAMOND}
-\cite{diamond}
-
-\subsubsection{HMMER}
-\cite{hmmer}
-
-\subsubsection{MMSeqs2}
-\cite{mmseqs2}
+\begin{list}{$\bullet$}{}
+    \item BLAST \cite{blast} est un logiciel qui trouve des régions de similarité entre des
+        séquences de protéines ou de nucléotides grâce à la minimisation basée sur les K-mers. Il
+        s'agit d'un outil plus ancien et moins efficace que MMSeqs2, mais il demeure largement
+        utilisé, entre autre grâce à son intégration au serveur du NCBI qui permet d'effectuer des
+        requête contre des bases de données.
+    \item DIAMOND \cite{diamond} est un logiciel d'alignement adapté aux données métagénomiques qui
+        rapporte un temps d'exécution jusqu'à $20\;000$ fois plus rapide que BLAST pour les
+        séquences courtes avec un degré de sensibilité similaire à BLAST. Au lieu d'utiliser des
+        K-mers, DIAMOND utilise un double indice, c'est-à-dire que la séquence recherchée ainsi que
+        la base de données sont indexées pour faciliter la recherche de correspondances. DIAMOND est
+        aussi plus résilient aux mutations que BLAST parce qu'il ne recherche pas de correspondances
+        parfaites entre les séquences.
+\end{list}
 
 \section{Bases de données}
+
+RefSeq \cite{refseq}
+GenBank \cite{genbank}
+Ensembl \cite{ensembl}
+
+GTDB \cite{gtdb}
+NCBI Taxonomy \cite{ncbi_tax}
 
 \section{Réseaux neuronaux}
 
