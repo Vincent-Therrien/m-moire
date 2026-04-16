@@ -1,5 +1,8 @@
 \chapter{État de l'art}
 \label{chapitre:1}
+Ce chapitre présente une revue de littérature sur les sujets en lien avec la classification
+taxonomique de données métagénomiques. Elle discute des technologies de séquençage, bases de
+données, techniques d'analyses classiques et techniques basées sur l'apprentissage automatique
 
 \section{Séquençage d'ADN}
 Les technologies de séquençage servent à obtenir des séquences de
@@ -13,7 +16,7 @@ séquençage d'ADN \cite{satam2023}.
 \hline
 Nom de la technologie & Principe de séquençage & Longueur des séquences & Limites \\
 \hline
-454 pyrosequencing & Synthèse & $400$ à $1000$ & Peut contenir des erreurs de délition et insertion \\
+454 pyrosequencing & Synthèse & $400$ à $1000$ & Peut contenir des erreurs de délétion et insertion \\
 Ion Torrent & Synthèse & $200$ à $300$ & Perte de signal lors du séquençage d'homopolymères \\
 Illumina & Synthèse & $36$ à $300$ & Taux d'erreur de séquençage jusqu'à $1\%$ dans certains cas. \\
 SOLiD & Ligation & $75$ & Erreurs de substitution et sous-représentation des régions riches en GC \\
@@ -75,6 +78,56 @@ dominant dans un échantillon; par exemple, dans un échantillon de microbiome h
 peut être surreprésenté et rendre l'ADN microbien plus difficile à analyser \cite{Matchado2024}. Ce
 phénomène est moins susceptible de survenir dans les analyses basées sur les gènes marqueurs parce
 que l'ADN humain ne comprend pas les séquences cibles.
+
+\section{Bases de données}
+La communauté scientifique maintient des bases de données publiques afin de faciliter la réplication
+de leurs études et d'améliorer l'état des connaissances en biologie. Cette section en présente
+quelques-unes qui sont pertinentes pour la classification taxonomique.
+
+\subsection{Bases de données de séquençage}
+Les bases de données de séquençage contiennent des séquences biologiques (protéines ou nucléotides)
+qui décrivent des génomes complets ou simplement des sections de génomes.
+
+\begin{list}{$\bullet$}{}
+    \item GenBank \cite{genbank} est une base de données ouverte de toutes les séquences de
+        nucléotides publiquement disponibles ainsi que leurs traduction en protéine, produite et
+        maintenue par le NCBI. En 2024, GenBank comprenait plus de $4,7$ milliards de séquences de
+        nucléotides appartenant à plus de $580\;000$ espèces.
+    \item RefSeq \cite{refseq} est une base de données ouverte de séquences de nucléotides et
+        protéines publiquement disponibles, produite et maintenue par le NCBI. Contrairement à
+        GenBank, RefSeq contient une seule séquence de référence pour chaque molécule biologique et
+        les séquences de RefSeq sont annotées pour leur assigner des informations supplémentaires,
+        comme les fonctions biologiques des séquences. Les séquences de RefSeq sont ainsi moins
+        redondantes et plus fiables que celle de GenBank, mais aussi moins nombreuses. Les données
+        de RefSeq sont enregistrées uniquement pour $176\;395$ organismes en mars 2026.
+    \item Ensembl \cite{ensembl} est un projet qui se concentre principalement sur l'annotation de
+        génomes de vertébrés. Au lieu d'effectuer des annotations sur des séquences biologiques
+        comme RefSeq, Ensembl les effectue plutôt à même des génomes d'organismes. La base de
+        données contient les génomes de $4700$ espèces en mars 2026.
+\end{list}
+
+\subsection{Bases de données taxonomiques}
+Les bases de données taxonomiques décrivent les liens entre des organismes, ce qui permet d'assigner
+des organismes à des groupes particuliers.
+
+\begin{list}{$\bullet$}{}
+    \item NCBI Taxonomy \cite{ncbi_tax} est une base de données taxonomique maintenue par le NCBI.
+        Elle classifie hiérarchiquement tous les organismes ayant au moins une séquence enregistrée
+        dans une base de données du INSDC, qui comprend GenBank. NCBI Taxonomy ne constitue pas un
+        arbre phylogénétique; il est plutôt un outil de classification taxonomique qui aide à
+        organiser les espèces mais ne représente pas exactement leurs liens évolutifs. Par
+        conséquent, certaines séquences ne sont pas attribuées à des n\oe uds particuliers dans
+        la hiérarchie taxonomique, ce qui rend leurs relations avec les autres espèces peu claire.
+        Aussi, la base de données est régulièrement mise à jour, ce qui peut entraîner des problèmes
+        de compatibilité de version entre certains outils.
+    \item GTDB \cite{gtdb} est une base de données phylogénétique moderne pour les bactérie et
+        archées maintenue par le Australian Centre for Ecogenomics et l'Université de Queensland.
+        GTDB normalise les rangs taxonomiques par distance évolutive, ce qui signifie que des taxons
+        d'un même niveau taxonomique comprennent une diversité génétique similaire. Cette
+        caractéristique est bénéfique pour les outils de classification parce que la base de données
+        comprend moins d'anomalies que NCBI Taxonomy. Toutefois, GTDB est limité à deux domaines du
+        vivant et ne contient aucune information sur les eucaryotes et les virus.
+\end{list}
 
 \section{Analyse des séquences}
 Les analyses métagénomiques se divisent en deux principaux types : les analyses taxonomiques et
@@ -225,15 +278,6 @@ présentées brièvement.
         aussi plus résilient aux mutations que BLAST parce qu'il ne recherche pas de correspondances
         parfaites entre les séquences.
 \end{list}
-
-\section{Bases de données}
-
-RefSeq \cite{refseq}
-GenBank \cite{genbank}
-Ensembl \cite{ensembl}
-
-GTDB \cite{gtdb}
-NCBI Taxonomy \cite{ncbi_tax}
 
 \section{Réseaux neuronaux}
 
