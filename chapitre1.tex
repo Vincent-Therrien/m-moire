@@ -280,22 +280,111 @@ présentées brièvement.
 \end{list}
 
 \section{Apprentissage automatique}
-L'apprentissage automatique consiste à permettre à un ordinateur d'apprendre à résoudre un problème
-sans avoir à spécifier explicitement de méthodes de résolution \cite{samue1959}. Dans ce contexte,
-<< apprendre >> désigne la capacité d'effectuer une tâche avec une plus grande efficacité, par
-exemple, d'effectuer une classification avec une plus grande précision. Il s'agit d'un domaine vaste
-de recherche; cette section en présente seulement les principes de bases, les architectures les plus
-utilisées de réseaux neuronaux et leur application à la métagénomique.
+L'apprentissage automatique \cite{oqlfAA} consiste à permettre à un ordinateur d'apprendre à
+résoudre un problème sans spécifier explicitement de méthodes de résolution \cite{samue1959}, par
+exemple, en laissant un algorithme de classification d'image améliorer sa précision sans
+interventions manuelles. Il s'agit d'un domaine vaste de recherche; cette section en présente
+seulement les principes de bases, les architectures de réseaux neuronaux les plus utilisées et leur
+application à la métagénomique.
 
 \subsection{Principes de base de l'apprentissage automatique}
+L'apprentissage automatique se divise en quatre principaux types.
 
-- fonctions
-- objectifs
-- entrées / sorties
-- classique / NN
-- pré-entraînement / supervisé / non-supervisé
+\subsubsection{Apprentissage supervisé}
+L'apprentissage supervisé consiste à entraîner des modèles en leur fournissant des données
+étiquetées, c'est-à-dire des données pour lesquelles une valeur cible est connue. Suivant la
+notation employée par \cite{vapnik1995}, on définit :
+
+\begin{equation}
+    \begin{cases}
+        X = \{x_1, x_2, x_3, ... \}, x_i \in R^n, \text{Un ensemble de vecteurs à classifier} \\
+        Y = \{y_1, y_2, y_3, ... \}, \text{Valeurs cibles pour chaque vecteur à classifier} \\
+        \alpha, \text{Un ensemble de paramètres à déterminer} \\
+        f(x, \alpha), \text{Une fonction qui cherche à prédire $y_i$} \\
+        \hat{Y} = \{\hat{y}_1, \hat{y}_2, \hat{y}_3, ... \}, \text{Valeurs prédites par $f(x, \alpha)$ pour chaque $x_i$}
+    \end{cases}
+\end{equation}
+
+On suppose que les valeurs cibles sont tirées d'une distribution inconnue $F(y_i | x_i)$. On mesure
+l'écart entre une valeur cible attendue, $y$, et une valeur cible prédite, $f(x, \alpha)$, au moyen
+d'une fonction de perte $L(y, f(x, \alpha))$. Afin de choisir les meilleurs paramètres pour
+approximer au mieux la distribution $F(y_i | x_i)$, on doit minimiser l'équation \ref{eq:risque}.
+
+\begin{equation}
+    \label{eq:risque}
+    \begin{split}
+        R(\alpha) &= \int L(y, f(x, \alpha)) dF(x, y) \\
+                  &= \frac{1}{k} \sum_{i=1}^{k} L(y_i, f(x_i, \alpha)) \;\;\; \text{(pour des valeurs discrètes)}
+    \end{split}
+\end{equation}
+
+Par conséquent, les paramètres optimaux $\alpha^*$ sont obtenus par l'équation \ref{eq:minim_risque}.
+
+\begin{equation}
+    \label{eq:minim_risque}
+    \alpha^* = \arg \min_{\alpha} \frac{1}{k} \sum_{i=1}^{k} L(y_i, f(x_i, \alpha))
+\end{equation}
+
+L'apprentissage supervisé vise principalement les problèmes de classification et de régression, pour
+lesquelles les valeurs de $Y$ sont respectivement discrète ou continues. Cette approche est
+particulièrement utilise en classification de données métagénomiques parce que les bases de données
+annotées contiennent des séquences d'ADN appartenant à des taxons connus.
+
+\subsubsection{Apprentissage non supervisé}
+L'apprentissage supervisé consiste à entraîner des modèles en leur fournissant des données non
+étiquetées, c'est-à-dire des données pour lesquelles aucune valeur cible n'est connue. Au lieu de
+minimiser l'écart entre une prédiction et une cible, on cherche les paramètres $\alpha$ qui
+modélisent les propriétés d'une distribution $F(x)$. Cette approche comprend plusieurs applications
+\cite{hasti2009}; nous en présentons deux principales.
+
+Le regroupement de données par classes (\textit{data clustering}) consiste à assigner à chaque
+donnée $X = \{x_1, x_2, ..., x_n\}$ une classe $S = \{s_1, s_2, ..., s_k\}$ en minimisant la variance
+intra-classe, donnée par l'équation \ref{eq:groupement}
+
+\begin{equation}
+    \label{eq:groupement}
+    arg min_{S} \sum_{i=1}^{k} \sum_{x \in s_i} (x - \mu_i)^2,
+\end{equation}
+
+où $\mu_i$ désigne le centroïde des données dans la classe $s_i$.
+
+La compression de données vise à minimiser l'erreur de reconstruction entre l'entrée $x$ et une
+version $\hat{x}$ reconstruite après compression, tel qu'indiqué par l'équation
+\ref{eq:compression}.
+
+\begin{equation}
+    \label{eq:compression}
+    \alpha^* = arg min_{\alpha} \sum_{i = 1}^{n} \left[ x_i - g_\alpha (f_\alpha (x_i)) \right]^2
+\end{equation}
+
+L'apprentissage non supervisé permet d'extraire des propriétés de données non étiquetées, ce qui est
+le cas pour les bases de données très volumineuses où l'étiquetage serait trop coûteux.
+
+\subsubsection{Apprentissage semi-supervisé}
+L'apprentissage semi-supervisé combine les approches supervisée et non supervisée pour entraîner des
+modèles à partir de données étiquetées et non étiquetées, ce qui permet d'atteindre des performances
+supérieures aux approches prises séparément et la rend intéressant pour la métagénomique, où des
+bases de données complémentaires peuvent être utilisées. En général, cette approche minimise une
+fonction qui comporte une perte supervisée et une perte de régulation non supervisée
+\cite{chapelle2006}.
+
+\subsubsection{Apprentissage auto-supervisé}
+L'apprentissage auto-supervisé \cite{doersch2017} est une phase préparatoire de l'apprentissage
+supervisé ou non supervisé qui consiste à entraîner un modèle à reconnaître les signaux les plus
+utiles dans les données, ce qui permet d'augmenter les performances lors de la principale phase
+d'entraînement.
+
+\subsubsection{Apprentissage par renforcement}
+L'apprentissage par renforcement \cite{sutton2018} diffère des autres approches parce qu'elle
+consiste à laisser un modèle interagir dynamiquement avec un autre système. Cette approche est peu
+fréquente dans la métagénomique parce que les analyses de séquences sont basées sur des données non
+dynamiques.
 
 \subsection{Réseaux neuronaux}
+
+\subsubsection{Entraînement}
+
+\subsubsection{Architectures}
 
 \subsubsection{Perceptron multicouche}
 - resnet
@@ -308,8 +397,12 @@ utilisées de réseaux neuronaux et leur application à la métagénomique.
 
 \subsubsection{Réseau neuronal récurrent}
 \subsubsection{Transformateur}
+- pré-entraînement
+
 \subsubsection{Réseau neuronal à espace d'états}
 - zamba
 
 \subsection{Application à la classification taxonomique}
+- format des données
 - BERTax
+
