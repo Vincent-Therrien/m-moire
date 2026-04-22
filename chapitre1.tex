@@ -381,10 +381,92 @@ fréquente dans la métagénomique parce que les analyses de séquences sont bas
 dynamiques.
 
 \subsection{Réseaux neuronaux}
+Les réseaux neuronaux, aussi appelés réseaux de neurones artificiels, sont une famille de
+modèles d'apprentissage automatique basés sur des unités de traitement nommées neurones artificiels
+inspirées des neurones biologiques \cite{goodfellow2016}.
 
 \subsubsection{Entraînement}
 
+L'équation \ref{eq:neurone} montre la modélisation mathématique d'un neurone artificiel.
+
+\begin{equation}
+    \label{eq:neurone}
+    z = f \left( \sum_{i = 1}^{n} w_i x_i + b \right)
+\end{equation}
+
+où $z$ est la valeur de sortie du neurone, $x_i$ est une valeur d'entrée, $w_i$ est un paramètre
+associé à une entrée nommée \textit{poids}, $b$ est un paramètre nommé \textit{biais} et $f(\cdot)$
+est une fonction non linéaire nommée \textit{fonction d'activation}. Un réseau neuronal est composé
+d'un ensemble de telles unités. La forme la plus simple est le perceptron multicouche, illustré par
+la figure \ref{fig:pmc}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/pmc.pdf}
+    \caption{Diagramme d'un perceptron multicouche}
+    \label{fig:pmc}
+\end{figure}
+
+Chaque cercle dans la figure \ref{fig:pmc} représente un neurone qui calcule l'équation
+\ref{eq:neurone} en prenant $x_i$ comme une valeur transmise par la couche précédente (représentée
+par une flèche), $w_i$ comme un paramètre ajustable associé à chaque entrée et $b$ comme un
+paramètre ajustable distinct des entrées. Un réseau neuronal comportant plusieurs couches cachées
+est dit \textit{profond} \cite{lecun2015}. La sortie $\mathbf{h}$ d'une couche de $n$ neurones
+recevant un vecteur d'entrées $\mathbf{x}$ de $m$ valeurs est
+
+\begin{equation}
+    \label{eq:propagation_avant}
+    \mathbf{h}_{n \times 1} = f \left( \mathbf{W}_{n \times m} \mathbf{x}_{m \times 1} + \mathbf{b}_{n \times 1} \right).
+\end{equation}
+
+L'équation \ref{eq:propagation_avant} calcule la propagation avant du réseau. On compare la sortie
+finale du réseau avec un résultat cible $\mathbf{y}_{k \times 1}$ au moyen d'une fonction de coût
+\ref{eq:cout} qui quantifie l'erreur du réseau.
+
+\begin{equation}
+    \label{eq:cout}
+    C(y, \hat{y}) = \sum_{i=1}^{k} L(y_i, \hat{y})
+\end{equation}
+
+où $L( \cdot )$ est une fonction de perte, par exemple, $L(y_i, \hat{y}) = (y - \hat{y})^2$. La
+rétropropagation consiste à calculer l'erreur associée à chaque neurone pour ajuster les paramètres
+de façon à minimiser le coût. L'erreur $e_i^{(n)}$ du neurone $j$ de la couche $n$ est donnée par
+l'équation \ref{eq:partiel}.
+
+\begin{equation}
+    \label{eq:partiel}
+    e_i^{(n)} = \frac{\partial C}{\partial h_i^{(n)}}
+\end{equation}
+
+Par la règle de la dérivée en chaîne, on calcule l'erreur associée à un neurone d'une couche
+précédente avec l'équation \ref{eq:retropropagation}.
+
+\begin{equation}
+    \label{eq:retropropagation}
+    e_j^{(n - 1)} = f\prime^{(n - 1)} (h_j^{(n - 1)}) \sum_i w_{ij}^{(n)} e_i^{(n)}
+\end{equation}
+
+On propage l'erreur jusqu'à la couche initiale du réseau. Ce processus se nomme rétropropagation et
+permet d'obtenir une erreur pour chaque neurone, laquelle sert à ajuster les paramètres par
+l'équation \ref{eq:ajustement}.
+
+\begin{equation}
+    \label{eq:ajustement}
+    \begin{split}
+        w_{ij}^{(n)} &= w_{ij}^{(n)} - \lambda \cdot e_i^{(n)} x_i^{(n - 1)} \\
+        b_i^{(n)} &= b_i^{(n)} - \lambda \cdot e_i^{(n)} \\
+    \end{split}
+\end{equation}
+
+oè $\lambda \in [0, 1]$ est un taux d'apprentissage qui détermine la vitesse à laquelle les paramètres sont mis
+à jour. On peut mettre les paramètres à jour après chaque propagation, mais il est plus efficace en
+pratique de calculer et d'additionner les erreurs pour plusieurs échantillons (un << lot >> de
+données) puis de mettre les paramètres à jour en utilisant la somme des erreurs.
+
 \subsubsection{Architectures}
+
+Plusieurs architectures de réseaux neuronaux ont été développées pour améliorer les performances des
+perceptrons multicouches.
 
 \subsubsection{Perceptron multicouche}
 - resnet
