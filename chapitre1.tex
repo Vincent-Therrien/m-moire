@@ -410,7 +410,8 @@ la figure \ref{fig:pmc}.
 Chaque cercle dans la figure \ref{fig:pmc} représente un neurone qui calcule l'équation
 \ref{eq:neurone} en prenant $x_i$ comme une valeur transmise par la couche précédente (représentée
 par une flèche), $w_i$ comme un paramètre ajustable associé à chaque entrée et $b$ comme un
-paramètre ajustable distinct des entrées. Un réseau neuronal comportant plusieurs couches cachées
+paramètre ajustable distinct des entrées. On dénombre ainsi, pour chaque couche cachée comportant
+$n$ neurones, $n^2$ poids et $n$ biais. Un réseau neuronal comportant plusieurs couches cachées
 est dit \textit{profond} \cite{lecun2015}. La sortie $\mathbf{h}$ d'une couche de $n$ neurones
 recevant un vecteur d'entrées $\mathbf{x}$ de $m$ valeurs est
 
@@ -458,31 +459,112 @@ l'équation \ref{eq:ajustement}.
     \end{split}
 \end{equation}
 
-oè $\lambda \in [0, 1]$ est un taux d'apprentissage qui détermine la vitesse à laquelle les paramètres sont mis
-à jour. On peut mettre les paramètres à jour après chaque propagation, mais il est plus efficace en
-pratique de calculer et d'additionner les erreurs pour plusieurs échantillons (un << lot >> de
-données) puis de mettre les paramètres à jour en utilisant la somme des erreurs.
+où $\lambda \in [0, 1]$ est un taux d'apprentissage qui détermine la vitesse à laquelle les
+paramètres sont mis à jour. $\lambda$ peut être une valeur fixe ou ajustée avec une inertie entre
+les mises à jour pour améliorer la stabilité de l'entraînement. On peut mettre les paramètres à jour
+après chaque propagation, mais il est plus efficace en pratique de calculer et d'additionner les
+erreurs pour plusieurs échantillons (un << lot >> de données) puis de mettre les paramètres à jour
+en utilisant la somme des erreurs.
 
 \subsubsection{Architectures}
 
-Plusieurs architectures de réseaux neuronaux ont été développées pour améliorer les performances des
-perceptrons multicouches.
-
-\subsubsection{Perceptron multicouche}
-- resnet
+Cette section présente des architectures de réseaux neuronaux développées pour améliorer les
+performances des perceptrons multicouches.
 
 \subsubsection{Réseau neuronal convolutionel}
+Les réseaux neuronaux convolutionels \cite{goodfellow2016} \cite{krizhevsky2012} utilisent des
+couches de neurones qui réalisent des opérations de convolution sur des données locales pour en
+extraire les motifs les plus pertinents pour une tâche à exécuter. Contrairement aux couches denses
+des perceptrons multicouches, une couche convolutionnelle compte seulement un biais et $K \times C_e
+\times C_s$ poids, où $K$ est la largeur du noyau de convolution, $C_e$ est le nombre de canaux
+d'entrées et $C_s$ est le nombre de canaux de sortie.
 
-\subsubsection{Réseau neuronal autoencodeur}
-- classique
-- débruiteur
+\subsubsection{Réseau neuronal résiduel}
+Les réseaux neuronaux résiduels connectent des couches de neurones à des couches qui les suivent
+immédiatement mais aussi à des couches davantage en aval dans le réseau; cette approche facilite
+l'optimisation des réseaux et peux en augmenter l'efficacité \cite{he2016}. Les connexions
+résiduelles aident à prévenir la dégradation qui survient lorsque les réseaux comprennent un nombre
+élevé de couches, ce qui permet d'entraîner des modèles plus profonds.
+
+\subsubsection{Autoencodeur}
+Les autoencodeurs \cite{bank2023} sont un type de réseaux neuronaux conçus pour encoder des données
+sous une forme compacte dans un \textit{espace latent} puis de reconstruire des données similaires à
+celles présentées en entrée. Les autoencodeurs peuvent ainsi apprendre à représenter des données
+sous une forme \textit{significative}, c'est à dire que la forme comprimée des données comprend les
+informations les plus importantes pour reconstruire le signal. Cette architecture se prête à
+l'apprentissage supervisé et non supervisé.
+
+Dans certains contextes, on peut améliorer les performances des autoencodeurs en modifiant l'espace
+latent. Les autoencodeurs débruiteurs sont entraînés à partir de signaux d'entrés modifiés par du
+bruit et sont encouragés à retirer le bruit durant la reconstruction du signal, ce qui les aide à
+identifier les motifs réellement significatifs. Les autoencodeurs variationnels utilisent une
+distribution statistique au lieu de vecteurs comme espace latent, ce qui les rend particulièrement
+apte pour la génération de données.
 
 \subsubsection{Réseau neuronal récurrent}
+Les réseaux neuronaux récurrents \cite{sak2014} utilisent des connections récurrentes qui gardent en
+mémoire un \textit{état caché} lors du traitement. Les architectures décrites jusqu'ici sont dites à
+action directe parce que l'information se propage dans une seule direction dans le réseau (la phase
+de rétropropagation mise à part). Dans un réseau récurrent, les sorties des neurones à un pas dans
+le temps sont fournies comme entrée au réseau à un pas subséquent, ce qui lui permet d'analyser les
+dépendances entre les éléments d'une séquence.
+
 \subsubsection{Transformateur}
-- pré-entraînement
+Les transformateurs \cite{transformer} forment une famille d'architectures basées sur l'attention
+multi-tête. L'entrée du modèle est une matrice $X_{n \times d_m}$, où $n$ est la longueur de la
+séquence et $d_m$ est la taille du vecteur de plongement pour chaque élément de la séquence.
+L'équation \ref{eq:autoattention} présente le mécanisme d'auto-attention.
+
+\begin{equation}
+    \label{eq:autoattention}
+    \text{Attention}(Q, K, V) = \left( \frac{QK^T}{\sqrt{d_k}} V \right)
+\end{equation}
+
+où $Q = XW^Q$, $K = XW^K$ et $V = XW^V$. Les termes $W$ désignent des matrices de paramètres de
+dimension $(d_m \times d_k)$, où $d_k$ est la dimension de projection.  L'équation
+\ref{eq:attention-multitete} présente le mécanisme d'attention multitête.
+
+\begin{equation}
+    \label{eq:attention-multitete}
+    \text{Attention Multitête}(Q, K, V) = Concat\left( t_1, t_2, ..., t_h \right) W^O
+\end{equation}
+
+où $t_i$ est un mécanisme d'auto-attention tel que réalisé par l'équation \ref{eq:autoattention}
+avec $d_k = \frac{d_m}{h}$ et $W^O$ est une matrice de paramètres. L'intérêt d'utiliser plusieurs
+têtes d'attention est qu'elles parviennent à se spécialiser durant l'entraînement afin d'analyser
+différents types de relations, ce qui augmente les performances du réseau \cite{clark2019}. On forme
+un bloc transformateur en ajoutant à l'attention multitête des couches dense ainsi que de
+normalisation et sommation. La figure \ref{fig:transformateur} montre une architecture de
+transformateur complète.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/transformateur.pdf}
+    \caption{Diagramme d'un transformateur encodeur seul}
+    \label{fig:transformateur}
+\end{figure}
+
+Pour une tâche de classification, on concatène à la séquence d'entrée un élément nommé jeton de
+classification qui est extrait de la sortie du réseau pour effectuer des prédictions. Pour le
+pré-entraînement auto-supervisé, la séquence de sortie est comparée à une séquence connue. Par
+exemple, avec la modélisation de langue par masque, on remplace aléatoirement des éléments de la
+séquence d'entrée par des jetons vide et le modèles doit apprendre à les reconstituer.
+
+Les transformateurs sont capable d'analyser les relations entre des éléments éloignés dans une
+séquence, mais contrairement aux RNN, ils sont plus facilement parallélisables grâce au mécanisme
+d'attention multitête. L'entraînement demeure toutefois coûteux parce que le modèle compare chaque
+élément d'une séquence avec tous les autres éléments de la séquence; le temps de calcul augmente
+donc quadratiquement, c'est-à-dire en temps $O(n^2)$.
 
 \subsubsection{Réseau neuronal à espace d'états}
 - zamba
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/mamba.pdf}
+    \caption{Diagramme d'un modèle Mamba}
+    \label{fig:mamba}
+\end{figure}
 
 \subsection{Application à la classification taxonomique}
 - format des données
