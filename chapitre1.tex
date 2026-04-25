@@ -645,11 +645,95 @@ transformateurs \cite{glorioso2024}.
 Les réseaux neuronaux ont été appliqués à plusieurs tâches en lien avec la métagénomique, mais les
 modèles actuels sont, en ce moment, à un stade de preuve de concept et ne sont pas utilisés en
 milieux cliniques \cite{roy2024}. On peut diviser ces modèles selon leur application à des analyses
-de classification de séquence ou de prédiction de phénotype.
+taxonomique ou fonctionnelle. Les réseaux neuronaux peuvent analyser des lectures (ou des contigs)
+directement ou encore utiliser des K-mers extraits de lectures.
 
-\subsubsection{Classification de séquences}
-La classification de séquence sert à assigner une catégorie à une séquence de nucléotide, qui peut
-être un taxon,
+\subsubsection{Analyse taxonomique}
+Les analyses taxonomiques visent à assigner un taxon à une séquence. Plusieurs modèles ont été
+développés dans ce but.
 
-\subsubsection{Prédiction de phénotype}
+Seq2species \cite{busia2019} est un réseau neuronal qui utilise des séquence 16S pour classifier des
+espèces en $13\;838$ taxons distincts. Le réseau est basé sur une architecture composée de couches
+convolutionnelles suivies de couches denses. Les séquences de nucléotides sont représentées par un
+encodage 1 parmi n (\textit{one-hot encoding}), qui consiste à assigner à chaque type de nucléotide
+un vecteur orthogonal. Le processus d'entraînement modifie aléatoirement certaines données pour
+simuler l'ajout de bruit dans les séquences. La rétropropagation utilise l’optimiseur ADAM et le
+calcul de la perte utilise la fonction d'entropie croisée. Un désavantage du réseau est sa
+limitation aux séquences 16S, qui empêche le modèle d'utiliser des données moins phylogénétiquement
+informatives.
 
+DeepMicrobes \cite{liang2020} est un modèle composé de quatre composantes principales : un encodage
+en K-mers, un RNN (LSTM bidirectionnel), un mécanisme d'auto-attention et des couches denses pour
+produire la sortie. DeepMicrobes n'est pas limité aux séquences 16S et parvient à utiliser toutes
+les données dans les séquences pour identifier les taxons. DeepMicrobes utilise un encodage basé sur
+les K-mers : la séquence d'entrée est segmentée en sous-séquences de $12$ nucléotides qui sont
+jetonisées. Comme le vocabulaire résultant serait trop grand ($4^16$ combinaisons possibles), les
+jetons sont plongés dans un vecteur de dimension $100$. DeepMicrobes dépasse plusieurs techniques
+de classification taxonomique mais requière de grandes ressources de calcul à cause du RNN et du
+mécanisme d'auto-attention.
+
+DeepVirFinder \cite{ren2020} est un réseau neuronal d'identification de virus dans les métagénomes
+basé sur les couches convolutionnelles et denses. Le modèle est entraîné avec des séquences tirées
+de RefSeq. Pour augmenter les données, les auteurs entraînent le modèle avec les séquences
+originales et leur complément, ce qui améliore les performances du modèle.
+
+CNN-RAI \cite{cnnrai2021} est un modèle de classification taxonomique qui utilise des couches
+convolutionnelles et l'indice d'abondance relative, une mesure qui estime l'importance de K-mers en
+fonction de leur fréquence dans une séquence en comparaison avec leur fréquence dans la majorité des
+séquences. Cette mesure est proche de l'indice TF-IDF (\textit{Term Frequency-Inverse Document
+Frequency}, ou fréquence de term - fréquence inverse de document), qui suppose qu'une sous-séquence
+peu fréquente dans la plupart des séquences mais abondante dans une séquence particulière a
+davantage d'importance dans ce contexte. Les données pour l'indice d'abondance relative sont générées
+avec l'outil RAIphy \cite{nalbantoglu11}, un programme semi-supervisé de classification de fragments
+métagénomiques.
+
+RNN-VirSeeker \cite{liu2022} est un modèle d'identification des séquences de virus dans les
+métagénomes. Le modèle est basé sur un RNN et est entraîné sur des séquences de 500 nucléotides
+tirées de RefSeq. Les auteurs rapportent des performances supérieures au modèle DeepVirFinder pour
+des tâches d'identification similaires.
+
+BERTax \cite{mock2022} est un modèle basé sur BERT, un modèle de transformateur encodeur seul
+développée pour le traitement des langues naturelles \cite{devlin2019}. BERTax en reprend
+l'architecture mais l'adapte à la classification taxonomique. Les séquences d'ADN sont converties en
+jetons de 3-mers, pour un vocabulaire de taille $4^3 = 64$ et la sortie est un vecteur dont chaque
+élément correspond à la probabilité d'appartenir à un taxon spécifique. L'étape de pré-entraînement
+comporte deux volets. (1) La modélisation masquée de langage (\textit{Masked Language Modelling,
+MLM}) consiste à masquer des jetons de la séquence d'entrée et à calculer la capacité du modèle à
+déterminer la séquence originale. (2) La prédiction de phrase suivante (\textit{Next Sentence
+Prediction, NSP}) consiste à remplacer la seconde moitié d'une séquence par une séquence appartenant
+à un autre échantillon et de mesurer la capacité du modèle à déterminer si la séquence est tirée
+d'un seul échantillon. Le pré-entraînement n'incorpore aucune donnée taxonomique; il s'agit d'une
+phase non supervisée qui permet au modèle d'apprendre une représentation efficace des données
+d'entraînement. Lors de la phase d'ajustement, le modèle est utilisé pour prédire les taxons
+auxquels appartiennent les séquences. Ce modèle démontre des performances supérieures à DeepMicrobe
+et Kraken2.
+
+\subsubsection{Analyse fonctionnelle}
+
+Les analyses fonctionnelles visent à identifier les fonctions liées à des séquences particulières.
+Un point d'intérêt particulier pour la communauté scientifique est d'identifier les gènes de
+résistance aux antimicrobiens (GRA, ou \text{Antimicrobial Resistance Gene, ARG}) en raison de leur
+importance en milieu clinique.
+
+DeepARG \cite{arango2018} est un modèle d'identification de gènes de résistance aux antimicrobiens,
+particulièrement pour les antibiotiques. Les modèle est basé sur le perceptron multicouche et
+utilise les bases de données CARD \cite{alcock2023}, ARDB \cite{liu2009} et UniProt \cite{uniprot}
+comme références. Les couches cachées du réseau comportent respectivement $2000$, $1000$, $500$ et
+$100$ neurones. La sortie du réseau assigne aux séquences d'entrée une probabilité d'appartenir à
+un gène de résistance aux antimicrobiens.
+
+ONN4MST \cite{zha2022} est un modèle basé sur des réseaux d'ontologie, ce qui lui permet de produire
+des résultats interprétables. La plupart des réseaux neuronaux fonctionnent en << boîte noire >>, ce
+qui veut dire que le processus de génération des résultats est opaque et complique leur
+applicabilité à des décisions critiques \cite{rudin2019}. ONN4MST utilise un réseau expressément
+conçu pour faciliter l'interprétation des résultats en fournissant des similarités entre des
+séquences et des microbiomes de composition connue.
+
+DeephageTP \cite{chu2022} est un modèle d'identification de protéines spécifiques au bactériophages
+dans les ensembles de données métagénomiques. DeephageTP utilise des couche convolutionnelles et un
+ensemble de données tirés de UniProtKB et UniRef, qui font partie de UniProt \cite{uniprot}.
+
+PlasGUN \cite{fang2020} est un modèle d'identification de plasmides dans les ensembles de données
+métagénomiques composées de lectures courtes (de $100$ à $900$ nucléotides) basé sur les CNN. Les
+auteurs rapportent des performances supérieures aux techniques classiques d'identification de
+plasmides.
