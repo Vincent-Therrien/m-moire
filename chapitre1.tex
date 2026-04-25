@@ -502,18 +502,18 @@ distribution statistique au lieu de vecteurs comme espace latent, ce qui les ren
 apte pour la génération de données.
 
 \subsubsection{Réseau neuronal récurrent}
-Les réseaux neuronaux récurrents \cite{sak2014} utilisent des connections récurrentes qui gardent en
-mémoire un \textit{état caché} lors du traitement. Les architectures décrites jusqu'ici sont dites à
-action directe parce que l'information se propage dans une seule direction dans le réseau (la phase
-de rétropropagation mise à part). Dans un réseau récurrent, les sorties des neurones à un pas dans
-le temps sont fournies comme entrée au réseau à un pas subséquent, ce qui lui permet d'analyser les
-dépendances entre les éléments d'une séquence.
+Les réseaux neuronaux récurrents utilisent des connections récurrentes qui gardent en mémoire un
+\textit{état caché} lors du traitement \cite{sak2014}. Les architectures décrites jusqu'ici sont
+dites à action directe parce que l'information se propage dans une seule direction dans le réseau
+(la phase de rétropropagation mise à part). Dans un réseau récurrent, les sorties des neurones à un
+pas dans le temps sont fournies comme entrée au réseau à un pas subséquent, ce qui lui permet
+d'analyser les dépendances entre les éléments d'une séquence.
 
 \subsubsection{Transformateur}
-Les transformateurs \cite{transformer} forment une famille d'architectures basées sur l'attention
-multi-tête. L'entrée du modèle est une matrice $X_{n \times d_m}$, où $n$ est la longueur de la
-séquence et $d_m$ est la taille du vecteur de plongement pour chaque élément de la séquence.
-L'équation \ref{eq:autoattention} présente le mécanisme d'auto-attention.
+Les transformateurs forment une famille d'architectures développées à partir de 2017 basées sur
+l'attention multi-tête \cite{transformer}. L'entrée du modèle est une matrice $X_{n \times d_m}$, où
+$n$ est la longueur de la séquence et $d_m$ est la taille du vecteur de plongement pour chaque
+élément de la séquence. L'équation \ref{eq:autoattention} présente le mécanisme d'auto-attention.
 
 \begin{equation}
     \label{eq:autoattention}
@@ -554,10 +554,68 @@ Les transformateurs sont capable d'analyser les relations entre des éléments �
 séquence, mais contrairement aux RNN, ils sont plus facilement parallélisables grâce au mécanisme
 d'attention multitête. L'entraînement demeure toutefois coûteux parce que le modèle compare chaque
 élément d'une séquence avec tous les autres éléments de la séquence; le temps de calcul augmente
-donc quadratiquement, c'est-à-dire en temps $O(n^2)$.
+donc quadratiquement, c'est-à-dire en temps $O(n^2)$. Néanmoins, l'entraînement s'appuie
+principalement sur des multiplications matricielles, qui sont fortement optimisées par les unités
+de traitement graphique \cite{gu2024}.
+
+Une modification des transformateurs conventionnels est le transformateur linéaire
+\cite{katharopoulos2020}, qui utilise la propriété d'associativité de la multiplication
+matricielle pour modifier l'équation \ref{eq:autoattention} et calculer l'auto-attention en temps
+$O(n)$ au lieu de $O(n^2)$. Cette opération compresse le contexte du transformateur, ce qui les
+rend plus rapides à entraîner mais diminue leurs performances comparativement aux transformateurs
+conventionnels.
 
 \subsubsection{Réseau neuronal à espace d'états}
-- zamba
+Les réseaux neuronaux à espace d'états (SSM) sont une catégorie de modèles développés à partir de
+2021 qui produisent une sortie $y(t)$ à partir d'un espace latent caché $h(t)$ obtenu d'une entrée
+$x(t)$ \cite{gu2024} comme le montre l'équation \ref{eq:ssm}.
+
+\begin{equation}
+    \label{eq:ssm}
+    \begin{split}
+        h^\prime (t) &= Ah(t) + Bx(t) \\
+        y(t) &= Ch(t)
+    \end{split}
+\end{equation}
+
+où $A$ est la matrice d'évolution qui contrôle la sélection des données à préserver dans l'espace
+latent et $B$ ainsi que $C$ sont des projections d'entrée et de sortie. On discrétise l'équation
+\ref{eq:ssm} pour obtenir l'équation \ref{eq:ssm_discrete}.
+
+\begin{equation}
+    \label{eq:ssm_discrete}
+    \begin{split}
+        h_t &= \overline{A} h_{t-1} + \overline{B} x_t \\
+        y_t &= \overline{C} h_t
+    \end{split}
+\end{equation}
+
+où la barre horizontale dénote des paramètres discrets obtenus par bloqueur d'ordre zéro. Les
+performances des SSM sont optimisées par deux mécanismes principaux :
+
+\begin{list}{$\bullet$}{}
+    \item Pour éviter la récurrence séquentielle (c'est-à-dire le calcul des valeurs $h_t$ qui
+        dépendent de $h_{t-1}$, comme avec les RNN), les SSM utilisent le scan parallèle
+        \cite{martin2018}, une technique qui convertit les opérations associatives séquentielles en
+        opérations parallèles. Cela diminue le temps de calcul total mais augmente le nombre total
+        d'opérations. Comme les opérations dans un scan parallèle doivent être associatives, cette
+        technique ne peut utiliser aucune opération non linéaire, ce qui exclue la plupart des
+        fonctions d'activation.
+    \item Pour réduire les opérations coûteuses de lectures et écritures dans la mémoire, Mamba
+        optimise le transfert de données. Plus spécifiquement, les paramètres $(\overline{A},
+        \overline{B})$ de l'équation \ref{eq:ssm_discrete} (dont la taille est proportionnelle à la
+        longueur de la séquence d'entrée) sont recalculées à partir de leurs paramètres (dont la
+        taille est fixe) au lieu d'être emmagasinés en mémoire, ce qui minimise les transferts de
+        données et accélère le temps de calcul.
+\end{list}
+
+Ces optimisations améliorent significativement les performances des SSM par rapport transformateurs
+parce que le temps de calcul en fonction de la taille de l'entrée augmente linéairement au lieu
+d'augmenter quadratiquement \cite{dao2024}, mais elles excluent toute utilisation de fonctions non
+linéaires, qui sont pourtant essentielles pour garantir les performances de réseaux neuronaux
+profonds \cite{hornik1991}. La non linéarité doit donc être apportée \textit{autour} d'un bloc de
+calcul de la fonction SSM. Un modèle basé sur un bloc SSM est le modèle Mamba, illustré par la
+figure \ref{fig:mamba}.
 
 \begin{figure}[h]
     \centering
@@ -566,7 +624,32 @@ donc quadratiquement, c'est-à-dire en temps $O(n^2)$.
     \label{fig:mamba}
 \end{figure}
 
+Dans la figure \ref{fig:mamba}, la non linéarité est apportée par les fonctions d'activation dans
+les blocs de projection non linéaires, les fonctions d'activation SiLU et le bloc de convolution.
+Ces opérateurs mélangent les données et permettent au bloc SSM de mieux les analyser. Les auteurs de
+Mamba \cite{gu2024} rapportent des performances supérieurs à des transformateurs de taille similaire
+pour des tâches de modélisation des langues naturelles, analyse de séquences d'ADN et modélisation
+de données audios. Ces performances s'expliquent par la sélectivité du bloc SSM. En compressant
+l'espace latent, Mamba sélectionne les données les plus importantes pour la tâche à réaliser,
+contrairement aux transformateurs linéaires qui le compressent sans discernement. Pour la première
+fois, un modèle de complexité linéaire (Mamba) peut ainsi égaler un modèle de complexité quadratique
+(le transformateur conventionnel).
+
+Le modèle Mamba peut être entraîné plus rapidement que les transformateurs, mais puisqu'il est basé
+sur un espace latent qui compresse le contexte d'une séquence, il ne dispose pas d'un contexte
+réellement global, contrairement aux transformateurs. D'autres auteurs ont combiné le modèle Mamba à
+des transformateurs dans le but de combiner l'efficacité de Mamba avec la compréhension des
+transformateurs \cite{glorioso2024}.
+
 \subsection{Application à la classification taxonomique}
-- format des données
-- BERTax
+Les réseaux neuronaux ont été appliqués à plusieurs tâches en lien avec la métagénomique, mais les
+modèles actuels sont, en ce moment, à un stade de preuve de concept et ne sont pas utilisés en
+milieux cliniques \cite{roy2024}. On peut diviser ces modèles selon leur application à des analyses
+de classification de séquence ou de prédiction de phénotype.
+
+\subsubsection{Classification de séquences}
+La classification de séquence sert à assigner une catégorie à une séquence de nucléotide, qui peut
+être un taxon,
+
+\subsubsection{Prédiction de phénotype}
 
