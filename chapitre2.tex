@@ -10,6 +10,9 @@ Les modèles sont entraînés et validés à partir de trois bases de données.
     \item RefSeq \cite{refseq} est une base de données de séquences biologiques de haute qualité
         et non redondante. Ces séquences sont utilisées pour générer des données synthétiques afin
         de simuler des échantillons métagénomiques réels.
+    \item L'ensemble de données généré par BERTax à partir de RefSeq \cite{mock2022} est composé
+        de lectures synthétiques de $1500$ nucléotides. Les lectures sont réparties dans les trois
+        domaines et les virus.
     \item GTDB \cite{gtdb} est une base de données taxonomique de bactéries et archées basée sur
         une approche phylogénétique.
     \item NCBI Taxonomy \cite{ncbi_tax} est une base de donnée taxonomique pour tous les organismes
@@ -51,11 +54,11 @@ l'équation \ref{eq:1_parmi_n}.
     \end{split}
 \end{equation}
 
-L'encodage 1 parmi N n'introduit pas d'artefact, contrairement à la jetonisation, mais il requière
+L'encodage 1 parmi N n'introduit pas d'artefact, contrairement à la jetonisation, mais il requiert
 davantage de ressources de calcul.
 
 \section{Modèles}
-Les modèles suivants sont validés.
+Les modèles présentés dans cette section sont validés.
 
 \subsection{Modèle aléatoire}
 Le modèle aléatoire consiste à assigner un taxon aléatoire pour chaque séquence. Ce modèle agit
@@ -72,10 +75,68 @@ On utilise les modèles Kraken 2 \cite{kraken} et MMSeqs 2 \cite{mmseqs2} pour l
 méthodes d'apprentissage automatique.
 
 \subsection{Perceptron multicouche}
+Le perceptron multicouche classifie les séquences par une architecture composée uniquement de couches
+denses. Il utilise les hyperparamètres définis par le tableau \ref{tableau:mlp_hyperparametre}.
+
+\begin{table}[hbt!]
+    \centering
+    \begin{tabular}{ll}
+\hline
+Nom de l'hyperparamètre & Valeur \\
+\hline
+Nombre de couches & $4$ \\
+Nombre de neurones par couche & $512$ \\
+Fonction d'activation & ReLU \\
+\hline
+    \end{tabular}
+    \caption{Hyperparamètres du perceptron multicouche}
+    \label{tableau:mlp_hyperparametre}
+\end{table}
 
 \subsection{Réseau neuronal convolutionnel}
+Le réseau neuronal convolutionnel classifie les séquences par une architecture composée de couches
+convolutionnelles suivies de de couches denses. Il utilise les hyperparamètres définis par le tableau
+\ref{tableau:cnn_hyperparametre}.
+
+\begin{table}[hbt!]
+    \centering
+    \begin{tabular}{ll}
+\hline
+Nom de l'hyperparamètre & Valeur \\
+\hline
+Nombre de couches convolutionnelles & $3$ \\
+Nombre de couches denses & $2$ \\
+Nombre de neurones par couche dense & $512$ \\
+Fonction d'activation & ReLU \\
+Taille du noyau de convolution & $9$ \\
+Enjambée & $2$ \\
+\hline
+    \end{tabular}
+    \caption{Hyperparamètres du réseau neuronal convolutionnel}
+    \label{tableau:cnn_hyperparametre}
+\end{table}
 
 \subsection{Autoencodeur débruiteur}
+L'autoencodeur débruiteur classifie les séquences en les compressant dans un espace réduit et en
+essayant de reconstruire les données d'entrée. Il utilise les hyperparamètres définis par le tableau
+\ref{tableau:dnae_hyperparametre}.
+
+\begin{table}[hbt!]
+    \centering
+    \begin{tabular}{ll}
+\hline
+Nom de l'hyperparamètre & Valeur \\
+\hline
+Nombre de couches convolutionnelles de compression & $3$ \\
+Nombre de couches convolutionnelles de décompression & $3$ \\
+Fonction d'activation & ReLU \\
+Taille du noyau de convolution & $9$ \\
+Enjambée & $2$ \\
+\hline
+    \end{tabular}
+    \caption{Hyperparamètres de l'autoencodeur débruiteur}
+    \label{tableau:dnae_hyperparametre}
+\end{table}
 
 \subsection{Transformateur encodeur seul}
 Le transformateur encodeur seul testé a une architecture définie par les hyperparamètres présentés
@@ -99,8 +160,8 @@ Dimension de plongement & $128$ \\
 \end{table}
 
 \subsection{Mamba}
-Le modèle Mamba testé a une architecture définie par les hyperparamètres présentés
-dans le tableau \ref{tableau:mamba_hyperparametre}.
+Le modèle Mamba testé a une architecture définie par les hyperparamètres présentés dans le tableau
+\ref{tableau:mamba_hyperparametre}.
 
 \begin{table}[hbt!]
     \centering
@@ -120,11 +181,67 @@ Taille de convolution & $4$ \\
     \label{tableau:mamba_hyperparametre}
 \end{table}
 
+\subsection{Mamba à flux parallèles}
+Une particularité de Mamba est son utilisation d'un espace latent pour compresser les données au
+lieu d'utiliser un contexte entier. Cela améliore les performances du modèle en réduisant la
+quantité de données à traiter mais empêche aussi le modèle d'avoir accès à toutes les données
+pertinentes pour la tâche qu'il doit résoudre. Un autre désavantage de cette particularité est que
+l'échelle temporelle de Mamba a tendance à s'effondrer durant l'entraînement et à considérer
+principalement un seul niveau de distance entre les données. Par exemple, le modèle pourrait décider
+d'accorder davantage d'importance à des nucléotides rapprochées pour favoriser de petits motifs et
+ainsi ignorer les liens entre les nucléotides éloignées qui pourraient pourtant contribuer à la
+classification taxonomique.
+
+Pour pallier ce désavantage, on propose une modification de l'architecture Mamba qui force
+l'utilisation de deux échelles temporelles, une rapide et une lente. Cette contrainte est fixée en
+restreignant le paramètre $dt$ à des intervalles différents pour chaque flux parallèle. Un élément
+porte (\textit{gating unit}) sélectionne ensuite les sorties les plus importantes des deux flux
+parallèles et les fournis à des blocs Mamba subséquents. Après plusieurs tests, on réalise que cette
+architecture est plus efficace lorsque les flux parallèles sont placés en début du réseau plutôt
+qu'à la fin ou au milieu, ce qui est logique puisque les séquences brutes contiennent davantage de
+données à traiter. La figure \ref{fig:mamba_parallele} présente cette architecture.
+
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/mamba_dual.pdf}
+    \caption{Diagramme d'un modèle Mamba avec flux parallèles}
+    \label{fig:mamba_parallele}
+\end{figure}
+
+\subsection{Combinaison de CNN avec d'autres modèles}
+La jetonisation est une technique répandue pour convertir des données séquentielles, comme du texte
+ou des séquences de nucléotides, en format acceptable pour des réseaux neuronaux. Elle introduit
+toutefois des artefacts en traitant les séquences, ce qui peut nuire aux performances des réseaux.
+On présente une méthode alternative de prétraitement des données qui évite l'introduction
+d'artefacts, le prétraitement par couches convolutionnelles.
+
+La figure \ref{fig:mamba_cnn} présente une architecture Mamba modifiée pour utiliser le
+prétraitement par CNN au lieu de la jetonisation pour préparer les séquences de nucléotides.
+L'entrée est une séquence de nucléotides en encodage 1 parmi N. Les convolutions permettent de
+mélanger les données locales pour extraire des motifs utiles. De plus, en utilisant une enjambée
+(\textit{stride}) supérieure à $1$, on peut diminuer la taille des séquences et contrôler la taille
+de l'entrée pour réduire le temps de calcul.
+
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/mamba_cnn.pdf}
+    \caption{Diagramme d'un modèle Mamba avec prétraitement par CNN}
+    \label{fig:mamba_cnn}
+\end{figure}
+
+\subsection{Combinaison de CNN, Mamba et flux parallèles}
+On combine le modèle Mamba avec les innovations présentées précédemment, la couche de pré-traitement
+des données par CNN et le traitement par flux parallèles, pour obtenir un autre modèle.
+
+\section{Génération des données}
+
 \section{Séparation des données de test et d'entraînement}
 
 \section{Entraînement}
 \subsection{Fonction de perte}
-\subsection{Propagation et Rétropropagation}
+\subsection{Rétropropagation et suivi des performances}
+- entropie
+
 \subsection{Pré-entraînement}
 \subsection{Prévention du surajustement}
 
@@ -133,3 +250,26 @@ Taille de convolution & $4$ \\
 \section{Logiciel}
 
 \section{Résumé des modèles}
+
+\begin{table}[hbt!]
+    \centering
+    \begin{tabular}{llp{0.42\linewidth}}
+\hline
+Nom du modèle & Encodage & Fonctionnement \\
+\hline
+Modèle aléatoire & N/A & Modèle de base \\
+Forêt aléatoire & K-mers & Ensemble d'arbres décisionnels. Modèle classique peu performant. \\
+Perceptron multicouche & Jetonisation & Réseau neuronal simple \\
+CNN & 1 parmi N & Modèle basé sur la convolution \\
+Autoencodeur débruiteur & 1 parmi N & Modèle basé sur la compression efficace des séquences \\
+Transformateur & Jetonisation & Transformateur encodeur seul, complexité $O(n^2)$ avec contexte global \\
+Transformateur-CNN & 1 parmi N & Identique au transformateur mais séquences pré-traitées par un CNN \\
+Mamba & Jetonisation & Modèle SSM optimisé, complexité $O(n)$ avec contexte compressé dans un espace latent \\
+Mamba-CNN & 1 parmi N & Identique au modèle Mamba mais séquences pré-traitées par un CNN \\
+Mamba-Dual & Jetonisation & Modèle Mamba avec flux parallèle pour traiter les données à des échelles distinctes \\
+Mamba-CNN-Dual & 1 parmi N & Modèle Mamba avec prétraitement par CNN et flux parallèles \\
+\hline
+    \end{tabular}
+    \caption{Résumé des modèles testés}
+    \label{tableau:methodes-resume}
+\end{table}
