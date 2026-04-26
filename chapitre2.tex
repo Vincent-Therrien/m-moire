@@ -4,6 +4,7 @@ Ce chapitre présente le processus d'élaboration et de validation de modèles d
 données métagénomiques.
 
 \section{Bases de données}
+\label{chapitre:2:bases_de_donnes}
 Les modèles sont entraînés et validés à partir de trois bases de données.
 
 \begin{enumerate}
@@ -87,6 +88,7 @@ Nom de l'hyperparamètre & Valeur \\
 Nombre de couches & $4$ \\
 Nombre de neurones par couche & $512$ \\
 Fonction d'activation & ReLU \\
+Taux d'abandon & $0,2$ \\
 \hline
     \end{tabular}
     \caption{Hyperparamètres du perceptron multicouche}
@@ -234,22 +236,201 @@ On combine le modèle Mamba avec les innovations présentées précédemment, la
 des données par CNN et le traitement par flux parallèles, pour obtenir un autre modèle.
 
 \section{Génération des données}
+\label{sec:jeux_de_donnees}
+On utilise les données présentées à la section \ref{chapitre:2:bases_de_donnes} pour générer deux
+ensembles de données avec lesquels entraîner et tester les modèles.
+
+Le \textbf{jeux de données 1} est tiré de BERTax \cite{mock2022}. Utiliser ce modèle permet de
+comparer les performances des nouveaux modèles avec ceux développés par d'autres équipes. Les
+auteurs de BERTax ont élaboré trois modèles pour faire différents tests; nous retenons leurs jeux de
+données dit << final >> et << pretraining >> pour l'évaluation et le pré-entraînement. Il s'agit
+d'un ensemble synthétique phylogénétiquement diversifié comprenant $2.708\;\times 10^6$ lectures
+d'eucaryotes, $1.903\;\times 10^6$ lectures de bactéries, $0.535\;\times 10^6$ lectures d'archées et
+$0.254\;\times 10^6$ lectures de virus. Les lectures ont toutes une longueur de $1500$ nucléotides.
+Toutes les lectures sont tirées de RefSeq et la taxonomie est basée sur NCBI Taxonomy.
+
+Le \textbf{jeux de données 2} est un ensemble de données original créé à partir de génomes de
+références disponibles sur RefSeq. On l'élabore pour tester les performances des modèles sur des
+lectures plus éloignées phylogénétiquement et donc difficiles à prédire. On obtient $695$ genres de
+bactéries et archées selon l'arbre phylogénétique défini par GTDB. Pour chaque genre, on sélectionne
+$10$ génomes de référence sur RefSeq, pour un total de $6950$ génomes de référence. Chaque génome
+de référence correspond à une espèce distincte. Pour chaque génome de référence, on génère $250$
+lectures synthétiques de $3000$ nucléotides. On obtient $1.738 \times 10^6$ lectures.
 
 \section{Séparation des données de test et d'entraînement}
+Pour le \textbf{jeux de données 1}, on divise les données en suivant la même procédure que les
+auteurs originaux : on assigne un identifiant unique aux $155$ genres les plus abondants. Les autres
+genre sont regroupé dans une classe distincte nommée << autres >>. On obtient $156$ classes.
+L'ensemble de tests en créé en échantillonnant aléatoirement $2000$ lecture par classe. Dans les
+lectures restantes, $95\%$ sont assignées à l'ensemble d'entraînement et les $5\%$ restant, à
+l'ensemble de validation. Puisque la classe << autres >> comprend beaucoup plus de lectures que le
+reste des classes, on la limite à $100\;000$ lectures pour équilibrer l'ensemble d'entraînement. On
+applique la même procédure pour séparer les données à un niveau taxonomique plus élevé : on assigne
+un identifiant unique aux $43$ phylums les plus abondants et on regroupe les lectures non assignées
+à une classe << autres >>. pour obtenir $44$ classes. On utilise aussi l'ensemble de données de
+pré-entraînement pour entraîner les modèles semi-supervisés.
+
+Pour le \textbf{jeux de données 2}, pour chaque genre (qui comprennent tous $10$ génomes de
+référence), on réserve $3$ génomes pour l'ensemble de tests. Les $7$ génomes de référence restants
+sont utilisés pour l'entraînement et la validation, à raison respectivement de $95\%$ et $5\%$ des
+lectures. On obtient $521\;250$ lectures de tests, $1\;155\;438$ lectures d'entraînement et
+$60\;812$ lectures de validation. Contrairement au jeu de données 1, cette division n'utilise pas de
+classe << autres >>.
 
 \section{Entraînement}
-\subsection{Fonction de perte}
-\subsection{Rétropropagation et suivi des performances}
-- entropie
+Les modèles sont testés selon une approche supervisée ou semi-supervisée.
 
-\subsection{Pré-entraînement}
+\subsection{Entraînement supervisé}
+
+Avec une approche \textbf{supervisée}, les modèles doivent classifier une séquence d'entrée $x$ dans
+un taxon cible $y \in [0, C]$, où $C$ désigne le nombre de classes avec $C > 2$. On valide deux
+fonctions de perte.
+
+La perte d'entropie croisée (EC) \cite{lecun2015} est donnée par l'équation
+\ref{eq:entropie_croisee}.
+
+\begin{equation}
+    EC = - \frac{1}{N} \sum_{i=1}^N \sum_{j=1}^C \left( y_{i, j} log(p_{i, j}) \right)
+    \label{eq:entropie_croisee}
+\end{equation}
+
+où $N$ est le nombre d'échantillons, $C$ est le nombre de classes, $p_{i, j}$ est la probabilité
+prédite par le modèle qu'un échantillon $i$ appartienne à la classe $j$ et $y_{i, j}$ est donné
+par l'équation \ref{eq:entropie_croisee_2}.
+
+\begin{equation}
+    y_{i, j} =
+    \begin{cases}
+        1 \;\; si \; i = j \\
+        0 \;\; si \; i \neq j \\
+    \end{cases}
+    \label{eq:entropie_croisee_2}
+\end{equation}
+
+La perte focale (PF) est une modification de l'entropie croisée spécifiquement conçue pour les jeux
+de données déséquilibrées, ce qui signifie que certaines classes comprennent significativement plus
+d'échantillons que d'autres, par exemple, par un facteur de $1$ pour $1000$ \cite{pf2017}. La perte
+focale pour un problème de classification binaire est donnée par l'équation \ref{eq:perte_focale}.
+
+\begin{equation}
+    PF = -\alpha (1 - p_t)^\gamma log(p_t)
+    \label{eq:perte_focale}
+\end{equation}
+
+où $\alpha$ et $\gamma$ sont des paramètres d'ajustement et $p_t$ est donné par l'équation
+\ref{eq:pf_2}.
+
+\begin{equation}
+    p_t =
+    \begin{cases}
+        p \;\; &si \; y = 1 \\
+        1 - p \;\; &si \; y = 0\\
+    \end{cases}
+    \label{eq:pf_2}
+\end{equation}
+
+\subsection{Entraînement semi-supervisé}
+On utilise la modélisation masquée de langue (\textit{Masked Language Modeling, MLM}) pour
+pré-entraîner les modèles autoencodeur, transformateur et Mamba par une approche semi-supervisée.
+Les autres modèles ne sont pas conçus pour bénéficier de l'apprentissage semi-supervisé.
+
+Le MLM consiste à remplacer aléatoirement des jetons de l'entrée en jeton spécial dénoté $MSK$. Le
+modèle doit déterminer les jetons présents à l'origine dans la séquence. On masque $15\%$ des jetons
+et on calcule la perte avec la fonction d'entropie croisée. Pour suivre l'amélioration des
+performances des modèles durant l'entraînement, on calcule l'entropie de la sortie, donnée par
+l'équation \ref{eq:entropie}.
+
+\begin{equation}
+    H(p, \hat{p}) = - \sum{i=1}^N \sum_{j=1}^V p_{i, j} log(\hat{p}_{i, j})
+    \label{eq:entropie}
+\end{equation}
+
+où $N$ est le nombre de jetons masqués, $V$ est la taille du vocabulaire (vaut $4^k$ pour des
+K-mers), $p_{i, j}$ est la probabilité réelle qu'un jeton masqué $i$ ait la valeur $j$ (vaut $1$
+pour le vrai jeton et $0$ pour les autres) et $\hat{p}_{i, j}$ est la probabilité prédite que le
+jeton masqué $i$ ait la valeur $j$. Une mesure liée à l'entropie est la perplexité $PP = e^H$. La
+perplexité est plus intuitive parce qu'elle estime le nombre de jetons possibles entre lesquels le
+modèle hésite.
+
+Pour teste deux approches de MLM. Avec la technique standard, les jetons sont masqués aléatoirement.
+Cela convient aux transformateurs parce qu'ils ont un contexte \textit{global} grâce au mécanisme
+d'auto-attention et parviennent à utiliser les jetons dans toutes la séquence pour déduire les
+jetons situés à différentes positions. Toutefois, les modèles Mamba sont séquentiels et ne peuvent
+pas s'appuyer sur toutes les données pour la tâche de MLM. On utilise donc aussi le masquage causal,
+qui consiste à masquer les derniers jetons de la séquence, ce qui est adapté aux modèles
+séquentiels.
+
 \subsection{Prévention du surajustement}
+Pour l'entraînement supervisé, on utilise l'ensemble de validation pour calculer la perte globale à
+la fin de chaque époque. L'entraînement est arrêté hâtivement si la parte se dégrade. On utilise une
+patience de $2$ époques pour éviter d'arrêter l'entraînement trop rapidement.
+
+Pour l'entraînement semi-supervisé, on calcule la perplexité à chaque $5000$ pas (c'est-à-dire, à
+chaque rétropropagation) et on arrête hâtivement avec un patience de $5$.
 
 \section{Évaluation}
+Pour calculer les performances des modèles, on reprend les métriques utilisées par
+\cite{portik2022}. Soient une lecture $L$, un taxon $T$ et une prédiction qui assigne à $L$ un taxon
+$P$. On dit d'une prediction qu'elle est :
+
+\begin{list}{$\bullet$}{}
+    \item un vrai positif, VP, si $L \in T$ et $L \in P$,
+    \item un faux positif, FP, si $L \notin T$ et $L \in P$,
+    \item un vrai négatif, VN, si $L \notin T$ et $L \notin P$ et
+    \item un faux négatif, FN, si $L \in T$ et $L \notin P$.
+\end{list}
+
+On définit ensuite les métriques suivantes :
+
+\begin{equation}
+    \text{Précision} = \frac{\text{Nombre de VP}}{\text{Nombre de VP} + \text{Nombre de FP}}
+\end{equation}
+
+\begin{equation}
+    \text{Rappel} = \frac{\text{Nombre de VP}}{\text{Nombre de VP} + \text{Nombre de FN}}
+\end{equation}
+
+\begin{equation}
+    \text{Mesure F} = 2 \times \frac{\text{Précision} \times \text{Rappel}}{\text{Précision} + \text{Rappel}}
+\end{equation}
+
+Ces métriques s'appliquent à des problèmes de classification binaire. Or, la classification
+taxonomique est un problème impliquant plusieurs classes. On précise donc des métriques dérivées
+pour combiner les performances pour chaque classe en les tenant équitablement en compte :
+
+\begin{equation}
+    \label{eq:precision_macro}
+    \text{Précision}_{macro} \% = \frac{1}{C} \sum^{C}_{i=1} \frac{VP_i}{VP_i + FP_i} \times 100 \%,
+\end{equation}
+
+\begin{equation}
+    \label{eq:rappel_macro}
+    \text{Rappel}_{macro} \% = \frac{1}{C} \sum^{C}_{i=1} \frac{VP_i}{VP_i + FN_i} \times 100 \%,
+\end{equation}
+
+\begin{equation}
+    \label{eq:f1_macro}
+    \text{Mesure F}_{macro} \% = \frac{1}{C} \sum^{C}_{i=1} \frac{2 \times VP_i}{2 \times VP_i + FP_i + FN_i} \times 100 \%,
+\end{equation}
+
+où $C$ est le nombre de classes et $X_i$ désigne le nombre de VP, FP, FP et FN pour une classe $i$.
+
 
 \section{Logiciel}
+Un projet de code source ouvert est développé pour entraîner et tester les modèles. Il est
+publiquement disponible à l'adresse \url{https://github.com/Vincent-Therrien/stelaro} et comporte
+deux composantes :
+
+\begin{list}{$\bullet$}{}
+    \item Une partie dorsal écrit en Rust installe les données des bases du NCBI et de GTDB et les
+        transforme en vue de les préparer à l'entraînement des modèles. Cette composante est conçue
+        pour être résilient aux erreurs.
+    \item Une partie frontale écrite en Python entraîne des modèles d'apprentissage automatique et
+        visualise les résultats.
+\end{list}
 
 \section{Résumé des modèles}
+La tableau \ref{tableau:methodes-resume} présente un résumé des modèles testés.
 
 \begin{table}[hbt!]
     \centering
@@ -259,9 +440,9 @@ Nom du modèle & Encodage & Fonctionnement \\
 \hline
 Modèle aléatoire & N/A & Modèle de base \\
 Forêt aléatoire & K-mers & Ensemble d'arbres décisionnels. Modèle classique peu performant. \\
-Perceptron multicouche & Jetonisation & Réseau neuronal simple \\
+MLP & 1 parmi N & Perceptron multicouche, réseau neuronal simple \\
 CNN & 1 parmi N & Modèle basé sur la convolution \\
-Autoencodeur débruiteur & 1 parmi N & Modèle basé sur la compression efficace des séquences \\
+AED & 1 parmi N & Autoencodeur débruiteur, modèle basé sur la compression efficace des séquences \\
 Transformateur & Jetonisation & Transformateur encodeur seul, complexité $O(n^2)$ avec contexte global \\
 Transformateur-CNN & 1 parmi N & Identique au transformateur mais séquences pré-traitées par un CNN \\
 Mamba & Jetonisation & Modèle SSM optimisé, complexité $O(n)$ avec contexte compressé dans un espace latent \\
