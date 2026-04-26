@@ -15,6 +15,10 @@
 \usepackage{hyperref}
 \usepackage{lipsum}
 \usepackage{layout}
+
+\usepackage{multirow}
+\usepackage{booktabs}
+
 \makeatletter
 \renewcommand*{\lay@value}[2]{%
   \strip@pt\dimexpr0.351459\dimexpr\csname#2\endcsname\relax\relax mm%
@@ -106,8 +110,8 @@
 %%%%%%%%%%%%%%%%%%%%
 % Page liminaires
 %%%%%%%%%%%%%%%%%%%%
-%\appendix % À partir de cette ligne toutes les commandes \chapter subséquentes seront des appendices
-%\include{annexe}
+\appendix % À partir de cette ligne toutes les commandes \chapter subséquentes seront des appendices
+\include{annexe}
 
 % index
 \printnoidxglossary[toctitle=INDEX,title=INDEX]

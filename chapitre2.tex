@@ -363,10 +363,12 @@ séquentiels.
 \subsection{Prévention du surajustement}
 Pour l'entraînement supervisé, on utilise l'ensemble de validation pour calculer la perte globale à
 la fin de chaque époque. L'entraînement est arrêté hâtivement si la parte se dégrade. On utilise une
-patience de $2$ époques pour éviter d'arrêter l'entraînement trop rapidement.
+patience de $2$ époques pour éviter d'arrêter l'entraînement trop rapidement. On entraîne les
+modèles pour un maximum de $12$ époques avec le jeu de données 1 et un maximum de $16$ époques pour
+le jeu de données 2.
 
-Pour l'entraînement semi-supervisé, on calcule la perplexité à chaque $5000$ pas (c'est-à-dire, à
-chaque rétropropagation) et on arrête hâtivement avec un patience de $5$.
+Pour l'entraînement semi-supervisé, on calcule la perplexité à chaque $1000$ pas (c'est-à-dire, à
+chaque rétropropagation) et on arrête hâtivement avec un patience de $2$.
 
 \section{Évaluation}
 Pour calculer les performances des modèles, on reprend les métriques utilisées par
