@@ -1,8 +1,180 @@
 \chapter{Discussion}
 \label{chapitre:4}
 
+\section{Effet du pré-entraînement}
+Les figures \ref{fig:causal} et \ref{fig:mlm} montrent respectivement l'entropie observée pour un
+pré-entraînement causal ou MLM. On note que le pré-entraînement est instable avec l'entraînement
+causal parce que l'entropie augmente après avoir diminué. On observe toutefois une stabilisation de
+l'entropie avec l'entraînement MLM. Une explication pour la différence de performances entre les
+deux types d'entraînement est la difficulté de la tâche. L'entraînement causal est plus complexe
+parce que le modèle doit déterminer une séquence ininterrompue de nucléotides à la fin des
+échantillons. L'entraînement MLM est plus simple parce que le modèle peut s'appuyer sur les données
+avant et après les jetons masquées pour identifier leur valeur originale. Des modèles plus grands et
+une plus grande quantité de données pourraient permettre aux modèles d'atteindre une entropie et une
+perte plus basse durant le pré-entraînement, mais à l'échelle des modèles testés, l'entraînement MLM
+est plus efficace.
+
+La figure \ref{fig:finetuning} montre la perte observée pour deux modèles, le transformateur et
+Mamba, pour deux régimes d'entraînements, pré-entraînement suivi d'ajustement et entraînement
+direct, pour un total de quatre courbes. On note les observations suivantes :
+
+\begin{list}{$\bullet$}{}
+    \item Le transformateur bénéficie du pré-entraînement, ce qui concorde avec les recherches en
+        apprentissage automatique selon lesquelles le pré-entraînement est nécessaire pour atteindre
+        de bonnes performances avec cette architecture \cite{clark2019}. Toutefois, on note que pour
+        un nombre élevé d'époques, les performances des deux régimes d'entraînement finissent par se
+        ressembler. On conclut que le pré-entraînement est une manière efficace de diminuer la durée
+        de convergence pour l'entraînement de transformateurs de classification taxonomique, mais
+        pour augmenter le plafond des performances du modèle. Ces résultats pourraient différer pour
+        des modèles de plus grande taille.
+    \item Le modèle Mamba ne bénéficie pas du pré-entraînement parce que les courbes correspondant
+        aux modèles pré-entraîné et non pré-entraîné ne diffèrent pas significativement. On conclut
+        que Mamba n'a pas besoin de pré-entraînement pour excéder les performances d'un
+        transformateur de taille similaire pour cette tâche. Ce résultat peut s'expliquer par le
+        mécanisme de compression à la base de Mamba. En entraînant le modèle à modéliser les
+        séquences au lieu de les classifier, le modèle apprendrait une manière inadaptée de
+        sélectionner les caractéristiques des données d'entrée. Le pré-entraînement améliore les
+        performances de modèles hybrides qui combinent les caractéristiques des transformateurs et
+        des SSM \cite{ren2025}, mais un modèle Mamba seul obtient des résultats plus mitigés.
+\end{list}
+
+La non-nécessité du pré-entraînement pour les modèles Mamba en constitue un avantage parce qu'elle
+réduit le temps d'entraînement total et ne cause pas de pertes de performance.
+
+\section{Effets de l'encodage}
+La figure \ref{fig:jetonisation} montre la perte observée au cours de l'entraînement pour
+différentes techniques de pré-traitement de données : la jetonisation (transformation de
+sous-séquences en identifiants) et le traitement par couches CNN.
+
+Pour la jetonisation, on note qu'une conversion de 3-mers est plus efficace que des 2-mers ou
+4-mers. On peut expliquer ce phénomène par la nature des modèles SSM, qui compriment le contexte
+dans un espace latent. En utilisant une jetonisation basée sur les 2-mers, la séquence est la plus
+longue et le modèle doit emmagasiner plus d'informations. En utilisant une jetonisation basée sur
+lse 4-mers, la séquence est plus courte mais davantage d'artefacts sont introduits. La jetonisation
+de 3-mers atteint un équilibre entre ces deux facteurs et parvient aux meilleures performances.
+
+La couche CNN entraîne les meilleurs résultats et la plus faible durée de convergence entre toutes
+les méthodes de pré-traitement. On conclut qu'il s'agit donc d'une manière efficace d'améliorer les
+performances d'un modèle Mamba pour la classification taxonomique.
+
+\section{Effet de la fonction de perte}
+\label{sec:f_perte_ch_4}
+La figure \ref{fig:fonction_de_perte} montre la précision observée en entraînant un modèle Mamba
+avec deux fonctions de perte différentes, l'entropie croisée (standard dans les problèmes de
+classification multi-classe) et la perte focale (recommandée pour les jeux de données fortement
+déséquilibrés). On rapporte la précision sur l'ensemble de validation parce que la perte est
+calculée à partir d'équations différentes et ne constitue donc pas un point de comparaison fiable.
+On n'observe pas de différence significative entre les performances des modèles entraîné avec l'une
+ou l'autre des fonctions de perte. Dans le jeu de données 1, le nombre d'échantillon entre les
+classes abondantes et peu abondantes diffèrent par un facteur d'environ $1$ pour $20$. On en conclut
+que ce jeu de donnée n'est pas suffisamment déséquilibré pour justifier l'utilisation d'une autre
+fonction de perte que l'entropie croisée.
+
+\section{Efficacité des performances}
+Le tableau \ref{table:performances} montre le nombre de paramètres et la durée d'un pas pour les
+modèles testés. Le nombre de paramètres est corrélés au nombre de FLOPS pour une architecture donnée
+\cite{kaplan2020}, mais on note, comme attendu, des différences marquées entre les types
+d'architecture. Les modèles récents (transformateurs et Mamba) comprennent relativement peu de
+paramètres mais requièrent plus de FLOPS et un temps de calcul plus élevé pour calculer
+l'auto-attention et l'espace latent. Les modèles plus anciens (MLP, CNN et DAE) comprennent plus de
+paramètres mais demandent moins de ressources de calcul. Leurs performances sont néanmoins
+inférieures.
+
+Le tableau \ref{table:token_results} montre les performances associées aux différentes techniques de
+pré-traitement des données pour le modèle Mamba. Comme à la section \ref{sec:f_perte_ch_4}, on note
+que le pré-traitement par CNN entraîne les meilleures performances, suivi de la jetonisation par
+3-mers, 2-mers et 4-mers, dans cet ordre. Le modèle qui utilise le pré-traitement par CNN s'entraîne
+plus rapidement que celui qui utilise la jetonisation par 3-mers, ce qui constitue un autre avantage
+par rapport à cette alternative. Au niveau du transformateur, on observe que le pré-traitement par
+CNN entraîne une amélioration des performances encore plus marquée qu'avec le modèle Mamba. Le
+transformateur avait été développé à l'origine pour le traitement des langues naturelles
+\cite{transformer} et utilise donc la jetonisation en entrée et en sortie, mais dans le contexte de
+la classification taxonomique, le pré-traitement par CNN en constitue une alternative viable.
+
 \section{Comparaison des modèles}
+Le tableau \ref{table:comparaison_bertax} compare les performances de tous les modèles testés sur le
+jeu de données 1. On effectue les observations suivantes :
+
+\begin{list}{$\bullet$}{}
+    \item Les modèles d'apprentissage automatique basés sur des architectures simples (forêt
+        aléatoire, MLP, CNN, AED) livrent les pires performances, ce qui est attendu parce qu'ils
+        ne sont pas conçus spécifiquement pour analyser des données séquentielles. On observe que
+        les couches convolutionnelles augmentent grandement les performances parce qu'elles
+        extraient des motifs locaux dans les séquences.
+    \item Les modèles DeepMicrobes et BERTax, qui comprennent plusieurs millions de paramètres,
+        offrent de bonnes performances pour les niveaux taxonomiques élevés, mais leurs performances
+        sur un niveaux taxonomique faible sont plus faibles. Ces modèles sont basés sur
+        l'auto-attention et leur entraînement favorise l'utilisation de motifs globaux dans les
+        séquences, ce qui explique que l'identification de taxons précis soit plus ardue.
+    \item Les modèles classiques (MMSeq2 et Kraken 2) offrent de bonnes performances pour un niveau
+        taxonomique faible mais de moins bonnes performances pour les niveaux taxonomiques élevés.
+        C'est un résultat attendu parce que ces méthodes sont basées sur une comparaison avec des
+        bases de données de référence qui cherchent les meilleures correspondances entre une
+        séquence de test et les séquences connues.
+    \item Le modèle Mamba et ses variantes livrent les meilleures performances pour les niveaux
+        taxonomiques faibles et de bonnes performances pour les niveaux élevés. En moyenne, ils
+        livrent les meilleures performances de tous les modèles testés pour le jeu de données.
+\end{list}
+
+Le tableau \ref{tab:jeu_2_precision} compare les performances de tous les modèles testés sur le
+jeu de données 2. La figure \ref{fig:niveaux} présente les mêmes données sous la forme d'un graphe
+à barres verticales. On effectue les observations suivantes :
+
+\begin{list}{$\bullet$}{}
+    \item Le modèle Mamba et ses variantes livrent les meilleures performances pour tous les niveaux
+        taxonomique.
+    \item Les améliorations de Mamba offrent de meilleures gains de performances qu'avec le jeu de
+        données 1. On explique cela par la longueur des séquences, qui comprennent deux fois plus de
+        nucléotides que le jeu de données 1. La variante Mamba-Dual, en particulier, montre des
+        performances plus élevées dans ce cas de figure parce que le traitement des séquences en
+        flux parallèles sur les longues séquences permet d'utiliser différentes échelles temporelles
+        et diversifie les motifs analysés par le modèle.
+\end{list}
 
 \section{Implication pour la métagénomique}
+Bien que les modèles d'apprentissage automatique métagénomiques demeurent principalement limitées au
+domaine de la recherche \cite{roy2024}, les améliorations de ces modèles ouvrent la porte à des
+applications cliniques. Les modèles d'AA pourraient livrer de meilleures performances que les
+modèles classiques et identifier avec plus de précision des pathogènes ou mieux caractériser des
+métagénomes. Plusieurs facteurs détermineront le degré d'applicabilité de ces modèles :
+
+\begin{list}{$\bullet$}{}
+    \item Le prix d'entraînement et d'inférence des modèles déterminera leur accessibilité aux
+        professionnels de la santé. Les modèles SSM, et en particulier le modèle Mamba, constituent
+        ainsi une avenue intéressant dans ce domaine parce que leur temps d'entraînement linéaire
+        permet d'obtenir des modèles moins dispendieux que des architectures basées sur des
+        transformateurs. Certains petits modèles spécialisés pourraient aussi être directement
+        entraînés ou ajustés sur du matériel informatique disponible au public, ce qui permettrait
+        de les adapter à des besoins spécifiques, comme à l'identification de pathogènes d'un souche
+        particulière.
+    \item La fiabilité des résultats est nécessaire pour les applications cliniques. Les modèles
+        basés sur les transformateurs et les SSM disposent d'une faible interprétabilité et
+        davantage de recherche est requise pour comprendre leur fonctionnement et valider leur
+        prédiction. Les résultats produits par les modèles d'AA peuvent néanmoins être validés avec
+        des bases de données fiables, comme RefSeq, et validées avec des techniques de
+        classification classiques.
+\end{list}
 
 \section{Améliorations possibles}
+Les modèles présentés offrent de meilleures performances que les modèles récents pour la
+classification taxonomique, mais il est possible de les améliorer davantage avec les modifications
+suivantes :
+
+\begin{list}{$\bullet$}{}
+    \item Augmenter la taille des modèles en haussant les dimensions de l'espace latent et le nombre
+        de couches pourrait leur permettre de modéliser des données plus complexes et d'effectuer
+        des prédictions plus précises. Cette approche peut toutefois aussi rendre les modèles plus
+        sujets au surajustement, et la méthode d'entraînement devrait être modifiée en conséquence.
+    \item Spécialiser les modèles à différentes sous-tâches, avec une approche de mélange d'experts
+        \ref{moe} par exemple, pourrait permettre aux modèles de classifier plus efficacement les
+        séquences et de requérir moins de temps d'entraînement. Cette approche a été utilisée avec
+        succès pour entraîner de grands modèles de langues pour un coût relativement faible
+        \cite{deepseekai2025} et pourrait être appliquée à des modèles d'analyse de données
+        métagénomiques.
+    \item L'utilisation de données métagénomiques réelles tirées d'expériences de séquençage sur le
+        terrain au lieu de génération synthétique à partir de bases de données de référence pourrait
+        améliorer la fiabilité des réseaux en reproduisant plus fidèlement dans leur ensemble
+        d'entraînement le type de données observées durant la phase d'inférence. L'utilisation d'un
+        jeu de données réelles faciliterait aussi la validation des modèles et leur applicabilité à
+        des milieux cliniques.
+\end{list}

@@ -17,32 +17,26 @@ détection de pathogènes, les diagnostics cliniques, la protection de
 l'environnement et l'agriculture \cite{liu2025}. De nombreux outils ont
 aussi été développés pour analyser les données de séquençage et faciliter le
 travail des chercheurs \cite{roy2024}. Ce mémoire s'intéresse en particulier à
-une application de l'analyse de séquences d'ADN: la classification taxonomique
+une application de l'analyse de séquences d'ADN, la classification taxonomique
 de métagénomes, qui vise à identifier les espèces présentes dans des microbiomes.
 
-La métagénomique se heurte à des problèmes majeurs.
-Le \textbf{volume de données} complique les analyses: un séquençage
-conventionnel de métagénome avec des technologies de troisième génération
+La métagénomique se heurte à des problèmes majeurs. Le \textbf{volume de données} complique les
+analyses. Un séquençage conventionnel de métagénome avec des technologies de troisième génération
 peut générer $10\;Go$ de données par expérience \cite{PerezCobas2020}. Les bases de données
-contiennent aussi beaucoup d'information : RefSeq \cite{refseq} contient des
-génomes de référence de haute qualité pour plus de $176\;395$ organismes en
-avril 2026 et GTDB \cite{gtdb} contient un taxonomie exhaustive pour plus de
-$153\;000$ espèces de procaryotes. Identifier une espèce en comparant une
-séquence d'ADN avec une base de données de référence entraînerait un temps
-de calcul inacceptable pour des applications réelles; c'est pourquoi de
-nombreuses méthodes d'analyse ont été développées pour obtenir des résultats
-plus rapidement \cite{roy2024}.
-La \textbf{fiabilité des données} fait référence à la confiance qu'on peut
-accorder aux résultats d'une analyse métagénomique. Gihawi et al
-\cite{gihawi2023} expliquent qu'une étude métagénomique influente était basée
-sur une analyse erronée : en normalisant mal les données et en utilisant des
-séquences contaminées par l'ADN humain, les chercheurs de cette étude en
-étaient venus à la conclusion qu'il est possible de prédire certains types
-de cancers à partir de données de microbiotes humains, ce qui a induit
-d'autres chercheurs en erreur. Il est donc impératif de développer des
-techniques d'analyse qui soient non seulement efficaces, mais aussi
-rigoureuses et facile à interpréter pour éviter d'autres scénarios du même
-genre.
+contiennent aussi beaucoup d'information : RefSeq \cite{refseq} contient des génomes de référence de
+haute qualité pour plus de $176\;395$ organismes en avril 2026 et GTDB \cite{gtdb} contient un
+taxonomie exhaustive pour plus de $153\;000$ espèces de procaryotes. Identifier une espèce en
+comparant une séquence d'ADN avec une base de données de référence entraînerait un temps de calcul
+inacceptable pour des applications réelles, c'est pourquoi de nombreuses méthodes d'analyse ont été
+développées pour obtenir des résultats plus rapidement \cite{roy2024}. La \textbf{fiabilité des
+résultats} fait référence à la confiance qu'on peut accorder aux données produites par une analyse
+métagénomique. Gihawi et al expliquent qu'une étude métagénomique influente était basée sur une
+analyse erronée : en normalisant mal les données et en utilisant des séquences contaminées par l'ADN
+humain, les chercheurs de cette étude en étaient venus à la conclusion qu'il est possible de prédire
+certains types de cancers à partir de données de microbiotes humains, ce qui a induit d'autres
+chercheurs en erreur \cite{gihawi2023}. Il est donc impératif de développer des techniques d'analyse
+qui soient non seulement efficaces, mais aussi rigoureuses et facile à interpréter pour éviter
+d'autres scénarios du même genre.
 
 Ce mémoire vise à améliorer des techniques de classification taxonomique de
 données de séquençage métagénomique, ce qui implique les étapes principales

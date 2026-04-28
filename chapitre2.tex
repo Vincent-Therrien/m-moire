@@ -111,7 +111,7 @@ Nombre de couches denses & $2$ \\
 Nombre de neurones par couche dense & $512$ \\
 Fonction d'activation & ReLU \\
 Taille du noyau de convolution & $9$ \\
-Enjambée & $2$ \\
+Enjambée & $1$ \\
 \hline
     \end{tabular}
     \caption{Hyperparamètres du réseau neuronal convolutionnel}
@@ -130,10 +130,13 @@ essayant de reconstruire les données d'entrée. Il utilise les hyperparamètres
 Nom de l'hyperparamètre & Valeur \\
 \hline
 Nombre de couches convolutionnelles de compression & $3$ \\
-Nombre de couches convolutionnelles de décompression & $3$ \\
+Nombre de couches denses de classification & $2$ \\
+Nombre de neurones par couche dense & $512$ \\
+Nombre de couches convolutionnelles de décompression & $1$ \\
+Nombre de couches denses de reconstruction & $2$ \\
 Fonction d'activation & ReLU \\
 Taille du noyau de convolution & $9$ \\
-Enjambée & $2$ \\
+Enjambée & $1$ \\
 \hline
     \end{tabular}
     \caption{Hyperparamètres de l'autoencodeur débruiteur}
@@ -328,6 +331,9 @@ où $\alpha$ et $\gamma$ sont des paramètres d'ajustement et $p_t$ est donné p
     \end{cases}
     \label{eq:pf_2}
 \end{equation}
+
+On utilise l'optimiseur Adam et on applique un plafond de $1$ aux valeurs des paramètres pour
+minimiser le surajustement.
 
 \subsection{Entraînement semi-supervisé}
 On utilise la modélisation masquée de langue (\textit{Masked Language Modeling, MLM}) pour

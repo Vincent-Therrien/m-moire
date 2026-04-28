@@ -1,4 +1,24 @@
 \begin{conclusion}
 \label{chapitre:conclusion}
+Ce mémoire présente des modèles d'apprentissage automatique développés pour la classification
+taxonomique de données métagénomiques. Les modèles sont basés sur différentes architectures (MLP,
+CNN, AED, transformateur et SSM) et sont entraînés à partir de données synthétiques générées avec la
+base de données RefSeq. Les performances des modèles sont comparés avec deux outils de
+classification classiques, MMSeqs 2 et Kraken 2, ainsi que deux modèles d'apprentissage automatique
+tiers, DeepMicrobes et BERTax.
+
+Le modèle SSM Mamba de base a une précision macro de $88.07\%$ en considérant la moyenne de deux
+évaluation sur des jeux de données distincts. On teste deux améliorations. (1) Pré-traiter les
+données d'entrée avec des couches CNN au lieu d'utiliser la jetonisation entraîne une précision
+moyenne supérieure de $88.96\%$. (2) Effectuer le traitement de données avec des flux parallèles
+dans un modèle Mamba entraîne une précision moyenne de $88.31\%$. Les longues séquences bénéficient
+davantage de cette modification. Combiner les deux améliorations entraîne la meilleure précision, à
+$89.03\%$. Un transformateur de taille comparable classifie les mêmes séquences avec une précision
+moyenne de $73.15\%$.
+
+Ces résultats démontre que l'architecture SSM constitue une alternative viable aux transformateurs
+pour la classification taxonomique. Ils parviennent à une plus grande précision et peuvent être
+entraînés en un temps linéaire $O(n)$ au lieu de quadratique, $O(n^2)$, pour les transformateurs.
+Davantage de travail est requis pour valider ces modèles sur des données issues du milieu clinique.
 
 \end{conclusion}

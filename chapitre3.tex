@@ -25,12 +25,12 @@ pré-entraînés (vierge). On rapporte les résultats pour le modèle Mamba pré
 \begin{figure}[hbt!]
   \includegraphics[width=0.7\linewidth]{figures/pretraining.pdf}
   \centering
-  \caption{Entropie du pré-entraînement MLM}
+  \caption{Perte observée avec et sans pré-entraînement MLM}
     \label{fig:finetuning}
 \end{figure}
 
 \section{Effets de l'encodage}
-La figure \ref{fig:jetonisaton} montre la perte observée pour différentes techniques de formatage
+La figure \ref{fig:jetonisation} montre la perte observée pour différentes techniques de formatage
 de l'entrée d'un modèle Mamba. Les tests ont été effectués avec le jeu de données 1.
 
 \begin{figure}[hbt!]
@@ -40,12 +40,72 @@ de l'entrée d'un modèle Mamba. Les tests ont été effectués avec le jeu de d
     \label{fig:jetonisation}
 \end{figure}
 
-\section{Effets de la longueur des séquences}
-
-
 \section{Effet de la fonction de perte}
+La figure \ref{fig:fonction_de_perte} présente la précision observée avec l'ensemble de validation
+en utilisant le jeu de donnée 1 et un modèle Mamba.
 
-\section{Ressources informatiques}
+\begin{figure}[hbt!]
+  \includegraphics[width=0.8\linewidth]{figures/fonction_de_perte.pdf}
+  \centering
+  \caption{Effet de la fonction de perte sur la précision}
+    \label{fig:fonction_de_perte}
+\end{figure}
+
+\section{Efficacité des performances}
+Suivant la norme ISO 25010:2023 \cite{iso25010_2023}, on entend par l'efficacité des performances
+deux principales caractéristiques dans le cadre de ce projet :
+
+\begin{enumerate}
+    \item Le comportement dans le temps désigne la durée nécessaire pour entraîner les modèles.
+    \item L'utilisation de ressources désigne la quantité de mémoire à utiliser et de calculs à
+        effectuer.
+\end{enumerate}
+
+Le tableau \ref{table:performances} présente l'efficacité des performances pour les modèles
+entraînés sur le jeu de données 1 avec des séquences d'entrée de $1500$ nucléotides et $156$ classes
+cible. On utilise des lots de $128$ échantillons.
+
+\begin{table}[hbt!]
+\centering
+\caption{
+    Performance des modèles pour $N = 1500$
+}
+\begin{tabular}{lccc} \hline
+Outil            & Nombre de paramètres & Durée d'un pas (s) \\ \hline
+BERTax           & $\approx 9\;000\;000$& $\approx 2.00$\\
+MLP              & $3\;677\;852$        & $0.010$            \\
+CNN              & $24\;671\;020$       & $0.024$            \\
+AED              & $26\;182\;286$       & $0.100$            \\
+Transformer      & $927\;517$           & $0.188$            \\
+Transformer-CNN  & $1\;047\;453$        & $0.201$            \\
+Mamba            & $553\;373$           & $0.176$            \\
+Mamba-Dual       & $586\;268$           & $0.148$            \\
+Mamba-CNN        & $640\;156$           & $0.189$            \\
+Mamba-Dual-CNN   & $724\;636$           & $0.164$            \\
+\hline
+\label{table:performances}
+\end{tabular}
+\end{table}
+
+Le tableau \ref{table:token_results} présente l'efficacité des performances pour différentes
+techniques de pré-traitement des données pour le transformateur et le modèle Mamba.
+
+\begin{table}[hbt!]
+\centering
+\caption{Efficacité des performances pour différentes méthodes de pré-traitement des données
+}
+\begin{tabular}{lccc} \hline
+Modèle                & Nombre de paramètres & Durée d'un pas (s) & Mesure-F \% \\ \hline
+Transformateur, 4-mer & $927\;517$           & $0,180$            & $52,96$ \\
+Transformateur-CNN    & $1\;047\;453$        & $0,192$            & $69,40$ \\
+Mamba, 4-mer          & $553\;373$           & $0,138$            & $72,45$ \\
+Mamba, 3-mer          & $504\;029$           & $0,191$            & $73,06$ \\
+Mamba, 2-mer          & $491\;693$           & $0,301$            & $72,49$ \\
+Mamba-CNN             & $640\;156$           & $0,182$            & $74,07$ \\
+\hline
+\label{table:token_results}
+\end{tabular}
+\end{table}
 
 \section{Comparaison des modèles}
 
@@ -72,7 +132,7 @@ BERTax           & $\mathbf{98,62}$ & $\mathbf{95.10}$ & $66,92$          & $86,
 Forêt aléatoire  & $60,89$          & $44,98$          & $21,07$          & $42,31$ \\
 MLP              & $55,52$          & $27,92$          & $15,56$          & $33,00$ \\
 CNN              & $69,62$          & $72,10$          & $48.43$          & $63.38$ \\
-AED              &                  &                  &                  &         \\
+AED              & $65,36$          & $75,39$          & $50.10$          & $63,62$ \\
 Transformer      & $82,07$          & $77,82$          & $57,48$          & $72,46$ \\
 Transformer-CNN  & $91,34$          & $89,54$          & $72,38$          & $84,42$ \\
 Mamba            & $96,39$          & $91,34$          & $75,59$          & $87,77$ \\
@@ -100,7 +160,7 @@ seconds meilleurs, en \textit{italique}.
 }
 \begin{tabular}{lccccccc} \hline
        & \multicolumn{7}{c}{Précision macro \%}       \\ \cmidrule(lr){2-8}
-Tool             & Domain  & Phylum  & Class   & Order   & Family  & Genus   & Mean \\ \hline
+Tool             & Domaine  & Phylum  & Classe & Ordre & Famille & Genre & Moyenne \\ \hline
 MMSeqs 2         & $98,05$ & $92,62$ & $91,39$ & $83,96$ & $77,91$ & $56,02$ & $83,33$ \\
 Kraken 2         & $88,97$ & $71,00$ & $69,91$ & $64,41$ & $60,67$ & $48,49$ & $67,24$ \\
 Transformer      & $97,61$ & $81,21$ & $79,54$ & $69,13$ & $63,92$ & $51,55$ & $73,83$\\
