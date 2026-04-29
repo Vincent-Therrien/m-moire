@@ -24,18 +24,18 @@ Les modèles sont entraînés et validés à partir de trois bases de données.
 \section{Encodage}
 Les données tirées de RefSeq sont des fichiers FASTA qui contiennent des chaînes de caractères :
 A, C, G, T, et N pour les nucléotides incertains. Puisque les réseaux neuronaux prennent en entrée
-des matrices numériques, il est nécessaire de transformer ces données en un format acceptable.
+des matrices numériques, il est nécessaire de transformer ces données en un autre format.
 
-\subsection{K-mer}
-L'encodage en K-mer consiste à mesurer la fréquence de K-mers dans une séquence. On obtient un
-dictionnaire qui associe à chaque K-mer une fréquence relative. Cette représentation entraîne une
-perte de données en lien avec l'ordonnancement des nucléotides et ne retient que les fréquences
-relative de sous-séquences. Il s'agit néanmoins d'une représentation efficace pour les modèles
-simples.
+\subsection{Abondance de K-mers}
+L'encodage d'abondance de K-mer consiste à mesurer la fréquence de K-mers dans une séquence. On
+obtient un dictionnaire qui associe à chaque K-mer une fréquence relative. Cette représentation
+entraîne une perte de données en lien avec l'ordonnancement des nucléotides et ne retient que les
+fréquences relative de sous-séquences. Il s'agit néanmoins d'une représentation efficace pour les
+modèles simples.
 
 \subsection{Jetonisation}
 La jetonisation consiste à diviser une séquence en sous-séquences de longueurs identiques et à leur
-assigner un identifiant numérique unique à chaque sous-séquence identique. La taille du vocabulaire
+assigner un identifiant numérique unique à chaque sous-séquence unique. La taille du vocabulaire
 (c'est-à-dire, le nombre d'identifiants différents) équivaut à $4^J$, où $J$ est la longueur des
 sous-séquences. Un désavantage de la jetonisation est qu'elle introduit des artefacts qui ne sont
 pas présents dans la séquence originale, par exemple, en ajoutant des segments entre les
@@ -56,7 +56,7 @@ l'équation \ref{eq:1_parmi_n}.
 \end{equation}
 
 L'encodage 1 parmi N n'introduit pas d'artefact, contrairement à la jetonisation, mais il requiert
-davantage de ressources de calcul.
+davantage de ressources de calcul parce que les données sont non compressées.
 
 \section{Modèles}
 Les modèles présentés dans cette section sont validés.
@@ -67,17 +67,20 @@ comme référence pour les autres modèles.
 
 \subsection{Forêt aléatoire}
 La forêt aléatoire \cite{breiman2001} est un modèle d'apprentissage automatique classique
-(c'est-à-dire non basé sur les réseaux neuronaux). Ce modèle utilise l'encodage de K-mers pour
-classifier les séquences et agit comme une seconde référence pour comparer les performances des
-modèles plus performants.
+(c'est-à-dire non basé sur les réseaux neuronaux). Ce modèle utilise l'encodage d'abondance de
+K-mers pour classifier les séquences et agit comme une seconde référence pour comparer les
+performances des modèles plus performants.
 
 \subsection{Modèles de classification taxonomique classiques}
 On utilise les modèles Kraken 2 \cite{kraken} et MMSeqs 2 \cite{mmseqs2} pour les comparer avec les
-méthodes d'apprentissage automatique.
+méthodes d'apprentissage automatique. Ces modèles construisent une base de donnée de référence à
+partir des lectures de l'ensemble d'entraînement et leurs performances sont validées avec l'ensemble
+de tests.
 
 \subsection{Perceptron multicouche}
-Le perceptron multicouche classifie les séquences par une architecture composée uniquement de couches
-denses. Il utilise les hyperparamètres définis par le tableau \ref{tableau:mlp_hyperparametre}.
+Le perceptron multicouche classifie les séquences par une architecture composée uniquement de
+couches denses. Il utilise les hyperparamètres définis par le tableau
+\ref{tableau:mlp_hyperparametre}.
 
 \begin{table}[hbt!]
     \centering
@@ -203,8 +206,7 @@ restreignant le paramètre $dt$ à des intervalles différents pour chaque flux 
 porte (\textit{gating unit}) sélectionne ensuite les sorties les plus importantes des deux flux
 parallèles et les fournis à des blocs Mamba subséquents. Après plusieurs tests, on réalise que cette
 architecture est plus efficace lorsque les flux parallèles sont placés en début du réseau plutôt
-qu'à la fin ou au milieu, ce qui est logique puisque les séquences brutes contiennent davantage de
-données à traiter. La figure \ref{fig:mamba_parallele} présente cette architecture.
+qu'à la fin ou au milieu. La figure \ref{fig:mamba_parallele} présente cette architecture.
 
 \begin{figure}[hbt!]
     \centering
@@ -245,12 +247,12 @@ ensembles de données avec lesquels entraîner et tester les modèles.
 
 Le \textbf{jeux de données 1} est tiré de BERTax \cite{mock2022}. Utiliser ce modèle permet de
 comparer les performances des nouveaux modèles avec ceux développés par d'autres équipes. Les
-auteurs de BERTax ont élaboré trois modèles pour faire différents tests; nous retenons leurs jeux de
-données dit << final >> et << pretraining >> pour l'évaluation et le pré-entraînement. Il s'agit
-d'un ensemble synthétique phylogénétiquement diversifié comprenant $2.708\;\times 10^6$ lectures
-d'eucaryotes, $1.903\;\times 10^6$ lectures de bactéries, $0.535\;\times 10^6$ lectures d'archées et
-$0.254\;\times 10^6$ lectures de virus. Les lectures ont toutes une longueur de $1500$ nucléotides.
-Toutes les lectures sont tirées de RefSeq et la taxonomie est basée sur NCBI Taxonomy.
+auteurs de BERTax ont élaboré quatre ensembles de données pour faire différents tests; nous retenons
+leurs jeux de données dit << final >> et << pretraining >> pour l'évaluation et le pré-entraînement.
+Il s'agit d'un ensemble synthétique phylogénétiquement diversifié comprenant $2.708\;\times 10^6$
+lectures d'eucaryotes, $1.903\;\times 10^6$ lectures de bactéries, $0.535\;\times 10^6$ lectures
+d'archées et $0.254\;\times 10^6$ lectures de virus. Les lectures ont toutes une longueur de $1500$
+nucléotides. Toutes les lectures sont tirées de RefSeq et la taxonomie est basée sur NCBI Taxonomy.
 
 Le \textbf{jeux de données 2} est un ensemble de données original créé à partir de génomes de
 références disponibles sur RefSeq. On l'élabore pour tester les performances des modèles sur des

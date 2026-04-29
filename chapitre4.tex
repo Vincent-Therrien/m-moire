@@ -10,9 +10,9 @@ deux types d'entraînement est la difficulté de la tâche. L'entraînement caus
 parce que le modèle doit déterminer une séquence ininterrompue de nucléotides à la fin des
 échantillons. L'entraînement MLM est plus simple parce que le modèle peut s'appuyer sur les données
 avant et après les jetons masquées pour identifier leur valeur originale. Des modèles plus grands et
-une plus grande quantité de données pourraient permettre aux modèles d'atteindre une entropie et une
-perte plus basse durant le pré-entraînement, mais à l'échelle des modèles testés, l'entraînement MLM
-est plus efficace.
+une plus grande quantité de données d'entraînement pourraient permettre aux modèles d'atteindre une
+entropie et une perte plus basse durant le pré-entraînement, mais à l'échelle des modèles testés,
+l'entraînement MLM est plus efficace.
 
 La figure \ref{fig:finetuning} montre la perte observée pour deux modèles, le transformateur et
 Mamba, pour deux régimes d'entraînements, pré-entraînement suivi d'ajustement et entraînement
@@ -132,7 +132,7 @@ jeu de données 2. La figure \ref{fig:niveaux} présente les mêmes données sou
 \end{list}
 
 \section{Implication pour la métagénomique}
-Bien que les modèles d'apprentissage automatique métagénomiques demeurent principalement limitées au
+Bien que les modèles d'apprentissage automatique métagénomiques demeurent principalement limités au
 domaine de la recherche \cite{roy2024}, les améliorations de ces modèles ouvrent la porte à des
 applications cliniques. Les modèles d'AA pourraient livrer de meilleures performances que les
 modèles classiques et identifier avec plus de précision des pathogènes ou mieux caractériser des
@@ -157,24 +157,22 @@ métagénomes. Plusieurs facteurs détermineront le degré d'applicabilité de c
 
 \section{Améliorations possibles}
 Les modèles présentés offrent de meilleures performances que les modèles récents pour la
-classification taxonomique, mais il est possible de les améliorer davantage avec les modifications
-suivantes :
+classification taxonomique, mais il est possible de les améliorer davantage avec les plusieurs
+modifications.
 
-\begin{list}{$\bullet$}{}
-    \item Augmenter la taille des modèles en haussant les dimensions de l'espace latent et le nombre
-        de couches pourrait leur permettre de modéliser des données plus complexes et d'effectuer
-        des prédictions plus précises. Cette approche peut toutefois aussi rendre les modèles plus
-        sujets au surajustement, et la méthode d'entraînement devrait être modifiée en conséquence.
-    \item Spécialiser les modèles à différentes sous-tâches, avec une approche de mélange d'experts
-        \ref{moe} par exemple, pourrait permettre aux modèles de classifier plus efficacement les
-        séquences et de requérir moins de temps d'entraînement. Cette approche a été utilisée avec
-        succès pour entraîner de grands modèles de langues pour un coût relativement faible
-        \cite{deepseekai2025} et pourrait être appliquée à des modèles d'analyse de données
-        métagénomiques.
-    \item L'utilisation de données métagénomiques réelles tirées d'expériences de séquençage sur le
-        terrain au lieu de génération synthétique à partir de bases de données de référence pourrait
-        améliorer la fiabilité des réseaux en reproduisant plus fidèlement dans leur ensemble
-        d'entraînement le type de données observées durant la phase d'inférence. L'utilisation d'un
-        jeu de données réelles faciliterait aussi la validation des modèles et leur applicabilité à
-        des milieux cliniques.
-\end{list}
+Augmenter la taille des modèles en haussant les dimensions de l'espace latent et le nombre de
+couches pourrait leur permettre de modéliser des données plus complexes et d'effectuer des
+prédictions plus précises. Cette approche peut toutefois aussi rendre les modèles plus sujets au
+surajustement, et la méthode d'entraînement devrait être modifiée en conséquence.
+
+Spécialiser les modèles à différentes sous-tâches, avec une approche de mélange d'experts \ref{moe}
+par exemple, pourrait permettre aux modèles de classifier plus efficacement les séquences et de
+requérir moins de temps d'entraînement. Cette approche a été utilisée avec succès pour entraîner de
+grands modèles de langues pour un coût relativement faible \cite{deepseekai2025} et pourrait être
+appliquée à des modèles d'analyse de données métagénomiques.
+
+L'utilisation de données métagénomiques réelles tirées d'expériences de séquençage sur le terrain au
+lieu de génération synthétique à partir de bases de données de référence pourrait améliorer la
+fiabilité des réseaux en reproduisant plus fidèlement dans leur ensemble d'entraînement le type de
+données observées durant la phase d'inférence. L'utilisation d'un jeu de données réelles
+faciliterait aussi la validation des modèles et leur applicabilité à des milieux cliniques.

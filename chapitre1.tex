@@ -2,13 +2,12 @@
 \label{chapitre:1}
 Ce chapitre présente une revue de littérature sur les sujets en lien avec la classification
 taxonomique de données métagénomiques. Elle discute des technologies de séquençage, bases de
-données, techniques d'analyses classiques et techniques basées sur l'apprentissage automatique
+données, techniques d'analyses classiques et techniques basées sur l'apprentissage automatique.
 
 \section{Séquençage d'ADN}
-Les technologies de séquençage servent à obtenir des séquences de
-caractères qui indiquent la structure de molécules d'ADN or d'ARN. Le tableau
-\ref{tableau:techniques_de_sequencage} présente quelques technologies de
-séquençage d'ADN \cite{satam2023}.
+Les technologies de séquençage servent à obtenir des séquences de caractères qui indiquent la
+structure de molécules d'ADN or d'ARN. Le tableau \ref{tableau:techniques_de_sequencage} présente
+quelques technologies de séquençage d'ADN \cite{satam2023}.
 
 \begin{table}[hbt!]
     \centering
@@ -28,9 +27,9 @@ Oxford Nanopore & Détection d'impédance & $10k$ à $30k$ & Taux d'erreur de s�
     \label{tableau:techniques_de_sequencage}
 \end{table}
 
-Il est nécessaire de suivre un protocole expérimental pour séquencer correctement
-du matériel génétique. Navguire et al \cite{Navgire2022} présentent les étapes
-fondamentales suivantes d'un tel protocole :
+Il est nécessaire de suivre un protocole expérimental pour séquencer correctement du matériel
+génétique. Navguire et al \cite{Navgire2022} présentent les étapes fondamentales suivantes d'un tel
+protocole :
 
 \begin{enumerate}
     \item \textbf{Collecte d'échantillon} : Le matériel génétique est prélevé
@@ -43,7 +42,7 @@ fondamentales suivantes d'un tel protocole :
         séquençage, par exemple, en ajoutant des réactifs pour provoquer la
         lyse des cellules et libérer leur matériel génétique. Le processus exact
         d'isolation de l'ADN dépend du type d'échantillon et doit préserver le
-        maximum de diversité dans l'échantillon pour éviter de déformer l'abondance
+        maximum de diversité dans le matériel analysé pour éviter de déformer l'abondance
         de certains organismes.
     \item \textbf{Préparation de la bibliothèque} : L'ADN isolé est adapté à
         une technologie de séquençage particulière, ce qui mène à la création
@@ -59,25 +58,25 @@ fondamentales suivantes d'un tel protocole :
         prend généralement plusieurs heures, voire plusieurs jours \cite{roy2024}.
 \end{enumerate}
 
-Il existe deux approches principales pour l 'étape 3 (préparation de la bibliothèque). Dans le cadre
+Il existe deux approches principales pour l'étape 3 (préparation de la bibliothèque). Dans le cadre
 d'une analyse métagénomique \textbf{basée sur les gènes marqueurs} (\textit{marker-gene
 metagenomics}), des régions spécifiques des métagénomes sont amplifiées et séquencées. Ces régions
 sont sélectionnées en fonction de leur capacité à identifier des espèces spécifiques. Par exemple,
 les gènes d'ARN ribosomique 16S ont tendance à être conservés au cours de l'évolution et peuvent
-être utilisés pour identifier des espèces de bactéries. Toutefois, puisque les gènes peuvent être
-transférés entre certains organismes et que les gènes marqueurs sont relativement courts, cette
-approche, bien que peu dispendieuse, est limitée à une faible sensitivité \cite{Matchado2024}. Une
-variante de cette approche consiste à utiliser des séquences plus longues que les gènes marqueurs
-seuls, ce qui peut améliorer les performances \cite{BenitezPaez2022}. La seconde approche de
-préparation d'une bibliothèque est le \textbf{séquençage complet du génome} (\textit{whole genome
-sequencing}), qui consiste à séquencer tous les fragments présents dans l'échantillon. Cette
-approche est plus dispendieuse parce qu'elle requiert le séquençage d'un volume beaucoup plus grand
-de matériel génétique, mais elle permet des analyses métagénomiques plus poussées parce que
-davantage de données sont disponibles. Un désavantage de cette approche est sa sensibilité à l'ADN
-dominant dans un échantillon; par exemple, dans un échantillon de microbiome humain, l'ADN humain
-peut être surreprésenté et rendre l'ADN microbien plus difficile à analyser \cite{Matchado2024}. Ce
-phénomène est moins susceptible de survenir dans les analyses basées sur les gènes marqueurs parce
-que l'ADN humain ne comprend pas les séquences cibles.
+être utilisés pour identifier des espèces de bactéries \cite{johnson2019evaluation}. Toutefois,
+puisque les gènes peuvent être transférés entre certains organismes et que les gènes marqueurs sont
+relativement courts, cette approche, bien que peu dispendieuse, est limitée à une faible sensitivité
+\cite{Matchado2024}. Une variante de cette approche consiste à utiliser des séquences plus longues
+que les gènes marqueurs seuls, ce qui peut améliorer les performances \cite{BenitezPaez2022}. La
+seconde approche de préparation d'une bibliothèque est le \textbf{séquençage complet du génome}
+(\textit{whole genome sequencing}), qui consiste à séquencer tous les fragments présents dans
+l'échantillon. Cette approche est plus dispendieuse parce qu'elle requiert le séquençage d'un volume
+beaucoup plus grand de matériel génétique, mais elle permet des analyses métagénomiques plus
+poussées parce que davantage de données sont disponibles. Un désavantage de cette approche est sa
+sensibilité à l'ADN dominant dans un échantillon; par exemple, dans un échantillon de microbiome
+humain, l'ADN humain peut être surreprésenté et rendre l'ADN microbien plus difficile à analyser
+\cite{Matchado2024}. Ce phénomène est moins susceptible de survenir dans les analyses basées sur les
+gènes marqueurs parce que l'ADN humain ne comprend pas les séquences cibles.
 
 \section{Bases de données}
 La communauté scientifique maintient des bases de données publiques afin de faciliter la réplication
@@ -99,7 +98,7 @@ qui décrivent des génomes complets ou simplement des sections de génomes.
         les séquences de RefSeq sont annotées pour leur assigner des informations supplémentaires,
         comme les fonctions biologiques des séquences. Les séquences de RefSeq sont ainsi moins
         redondantes et plus fiables que celle de GenBank, mais aussi moins nombreuses. Les données
-        de RefSeq sont enregistrées uniquement pour $176\;395$ organismes en mars 2026.
+        de RefSeq sont enregistrées pour $176\;395$ organismes en mars 2026.
     \item Ensembl \cite{ensembl} est un projet qui se concentre principalement sur l'annotation de
         génomes de vertébrés. Au lieu d'effectuer des annotations sur des séquences biologiques
         comme RefSeq, Ensembl les effectue plutôt à même des génomes d'organismes. La base de
@@ -117,8 +116,8 @@ des organismes à des groupes particuliers.
         arbre phylogénétique; il est plutôt un outil de classification taxonomique qui aide à
         organiser les espèces mais ne représente pas exactement leurs liens évolutifs. Par
         conséquent, certaines séquences ne sont pas attribuées à des n\oe uds particuliers dans
-        la hiérarchie taxonomique, ce qui rend leurs relations avec les autres espèces peu claire.
-        Aussi, la base de données est régulièrement mise à jour, ce qui peut entraîner des problèmes
+        la hiérarchie taxonomique, ce qui rend leurs relations avec les autres espèces peu claires.
+        La base de données est régulièrement mise à jour, ce qui peut entraîner des problèmes
         de compatibilité de version entre certains outils.
     \item GTDB \cite{gtdb} est une base de données phylogénétique moderne pour les bactérie et
         archées maintenue par le Australian Centre for Ecogenomics et l'Université de Queensland.
@@ -145,7 +144,7 @@ analyses taxonomiques peuvent s'appuyer sur plusieurs outils.
 
 \subsubsection{Kraken2}
 Kraken \cite{kraken} est une suite d'outils de classification, quantification et visualisation
-métagénomique. La suite inclut quatre versions du logiciel :
+métagénomique. La suite inclut quatre logiciels :
 
 \begin{list}{$\bullet$}{}
     \item \textbf{Kraken} classifie les lectures d'ADN à partir d'une base de données de K-mers en
@@ -177,17 +176,17 @@ La suite logicielle Kraken contient par ailleurs KrakenTools et Pavian, des outi
 statistique et de visualisation des résultats. Des outils tiers sont généralement requis pour
 réaliser une analyse complète. Par exemple, avec de courtes lectures d'ADN produites par des
 appareils de la plateforme Illumina ($100$ à $250$ nucléotide par lecture), il est d'abord
-nécessaire de former des contigs avec un logiciel comme Bowtie \cite{kraken}.
+nécessaire de former des contigs avec un logiciel comme Bowtie \cite{langmead2012fast} \cite{kraken}.
 
 \subsubsection{bracken}
-Bracken \cite{bracken} est un logiciel de profilage taxonomique basé sur Kraken.
-Kraken n'est pas conçu pour mesurer les abondances relatives de groupes taxonomiques présents dans
-un échantillon; il sert plutôt à identifier des espèces précises. Comme plusieurs séquences d'ADN
-sont communes à plusieurs espèces à cause de régions hautement conservées ou de transferts
-horizontaux, Kraken assigne aux lectures correspondantes des taxons génériques, ce qui rend les
-résultats impropres à une analyse d'abondance. Bracken modifie les résultats de Kraken en
-redistribuant les lectures à travers un arbre phylogénétique par une méthode probabiliste, ce qui
-les rend apte à une analyse d'abondances.
+Bracken \cite{bracken} est un logiciel de profilage taxonomique basé sur Kraken. Kraken n'est pas
+conçu pour mesurer les abondances relatives de groupes taxonomiques présents dans un échantillon; il
+sert plutôt à identifier des espèces précises. Comme plusieurs séquences d'ADN sont communes à
+plusieurs espèces à cause de régions hautement conservées ou de transferts horizontaux, Kraken
+assigne aux lectures correspondantes des taxons génériques, ce qui rend les résultats impropres à
+une analyse d'abondance. Bracken modifie les résultats de Kraken en redistribuant les lectures à
+travers un arbre phylogénétique par une méthode probabiliste, ce qui les rend apte à une analyse
+d'abondances.
 
 \subsubsection{MetaPhlAn 3}
 MetaPhlAn 3 \cite{metaphlan3} est un logiciel de classification taxonomique qui utilise une approche
@@ -326,8 +325,8 @@ Par conséquent, les paramètres optimaux $\alpha^*$ sont obtenus par l'équatio
 \end{equation}
 
 L'apprentissage supervisé vise principalement les problèmes de classification et de régression, pour
-lesquelles les valeurs de $Y$ sont respectivement discrète ou continues. Cette approche est
-particulièrement utilise en classification de données métagénomiques parce que les bases de données
+lesquels les valeurs de $Y$ sont respectivement discrètes ou continues. Cette approche est
+particulièrement utile en classification de données métagénomiques parce que les bases de données
 annotées contiennent des séquences d'ADN appartenant à des taxons connus.
 
 \subsubsection{Apprentissage non supervisé}
@@ -363,7 +362,7 @@ le cas pour les bases de données très volumineuses où l'étiquetage serait tr
 \subsubsection{Apprentissage semi-supervisé}
 L'apprentissage semi-supervisé combine les approches supervisée et non supervisée pour entraîner des
 modèles à partir de données étiquetées et non étiquetées, ce qui permet d'atteindre des performances
-supérieures aux approches prises séparément et la rend intéressant pour la métagénomique, où des
+supérieures aux approches prises séparément et la rend intéressants pour la métagénomique, où des
 bases de données complémentaires peuvent être utilisées. En général, cette approche minimise une
 fonction qui comporte une perte supervisée et une perte de régulation non supervisée
 \cite{chapelle2006}.
@@ -371,14 +370,14 @@ fonction qui comporte une perte supervisée et une perte de régulation non supe
 \subsubsection{Apprentissage auto-supervisé}
 L'apprentissage auto-supervisé \cite{doersch2017} est une phase préparatoire de l'apprentissage
 supervisé ou non supervisé qui consiste à entraîner un modèle à reconnaître les signaux les plus
-utiles dans les données, ce qui permet d'augmenter les performances lors de la principale phase
+utiles dans les données, ce qui permet d'augmenter les performances lors de la phase principale
 d'entraînement.
 
 \subsubsection{Apprentissage par renforcement}
 L'apprentissage par renforcement \cite{sutton2018} diffère des autres approches parce qu'elle
-consiste à laisser un modèle interagir dynamiquement avec un autre système. Cette approche est peu
-fréquente dans la métagénomique parce que les analyses de séquences sont basées sur des données non
-dynamiques.
+consiste à laisser un modèle interagir dynamiquement avec un autre système pour apprendre à résoudre
+une tâche. Cette approche est peu fréquente en métagénomique parce que les analyses de séquences
+sont basées sur des données non dynamiques.
 
 \subsection{Réseaux neuronaux}
 Les réseaux neuronaux, aussi appelés réseaux de neurones artificiels, sont une famille de
@@ -477,7 +476,9 @@ couches de neurones qui réalisent des opérations de convolution sur des donné
 extraire les motifs les plus pertinents pour une tâche à exécuter. Contrairement aux couches denses
 des perceptrons multicouches, une couche convolutionnelle compte seulement un biais et $K \times C_e
 \times C_s$ poids, où $K$ est la largeur du noyau de convolution, $C_e$ est le nombre de canaux
-d'entrées et $C_s$ est le nombre de canaux de sortie.
+d'entrées et $C_s$ est le nombre de canaux de sortie. Une couche convolutionnelle peut définir
+plusieurs canaux de sortie, ce qui augmente la quantité de données à traiter par une couche
+dense subséquente.
 
 \subsubsection{Réseau neuronal résiduel}
 Les réseaux neuronaux résiduels connectent des couches de neurones à des couches qui les suivent
@@ -497,9 +498,9 @@ l'apprentissage supervisé et non supervisé.
 Dans certains contextes, on peut améliorer les performances des autoencodeurs en modifiant l'espace
 latent. Les autoencodeurs débruiteurs sont entraînés à partir de signaux d'entrés modifiés par du
 bruit et sont encouragés à retirer le bruit durant la reconstruction du signal, ce qui les aide à
-identifier les motifs réellement significatifs. Les autoencodeurs variationnels utilisent une
-distribution statistique au lieu de vecteurs comme espace latent, ce qui les rend particulièrement
-apte pour la génération de données.
+identifier les motifs réellement significatifs \cite{gondara2016}. Les autoencodeurs variationnels
+utilisent une distribution statistique au lieu de vecteurs comme espace latent, ce qui les rend
+particulièrement apte pour la génération de données \cite{PinheiroCinelli2021}.
 
 \subsubsection{Réseau neuronal récurrent}
 Les réseaux neuronaux récurrents utilisent des connections récurrentes qui gardent en mémoire un
@@ -548,15 +549,15 @@ Pour une tâche de classification, on concatène à la séquence d'entrée un é
 classification qui est extrait de la sortie du réseau pour effectuer des prédictions. Pour le
 pré-entraînement auto-supervisé, la séquence de sortie est comparée à une séquence connue. Par
 exemple, avec la modélisation de langue par masque, on remplace aléatoirement des éléments de la
-séquence d'entrée par des jetons vide et le modèles doit apprendre à les reconstituer.
+séquence d'entrée par des jetons vides et le modèles doit apprendre à les reconstituer.
 
-Les transformateurs sont capable d'analyser les relations entre des éléments éloignés dans une
+Les transformateurs sont capables d'analyser les relations entre des éléments éloignés dans une
 séquence, mais contrairement aux RNN, ils sont plus facilement parallélisables grâce au mécanisme
 d'attention multitête. L'entraînement demeure toutefois coûteux parce que le modèle compare chaque
 élément d'une séquence avec tous les autres éléments de la séquence; le temps de calcul augmente
-donc quadratiquement, c'est-à-dire en temps $O(n^2)$. Néanmoins, l'entraînement s'appuie
-principalement sur des multiplications matricielles, qui sont fortement optimisées par les unités
-de traitement graphique \cite{gu2024}.
+donc quadratiquement, c'est-à-dire en temps $O(n^2)$, où $n$ est corrélé à la longueur de la
+séquence d'entrée. Néanmoins, l'entraînement s'appuie principalement sur des multiplications
+matricielles, qui sont fortement optimisées par les unités de traitement graphique \cite{gu2024}.
 
 Une modification des transformateurs conventionnels est le transformateur linéaire
 \cite{katharopoulos2020}, qui utilise la propriété d'associativité de la multiplication
@@ -609,13 +610,13 @@ performances des SSM sont optimisées par deux mécanismes principaux :
         données et accélère le temps de calcul.
 \end{list}
 
-Ces optimisations améliorent significativement les performances des SSM par rapport transformateurs
-parce que le temps de calcul en fonction de la taille de l'entrée augmente linéairement au lieu
-d'augmenter quadratiquement \cite{dao2024}, mais elles excluent toute utilisation de fonctions non
-linéaires, qui sont pourtant essentielles pour garantir les performances de réseaux neuronaux
-profonds \cite{hornik1991}. La non linéarité doit donc être apportée \textit{autour} d'un bloc de
-calcul de la fonction SSM. Un modèle basé sur un bloc SSM est le modèle Mamba, illustré par la
-figure \ref{fig:mamba}.
+Ces optimisations diminuent significativement le coût d'entraînement des SSM par rapport
+transformateurs parce que le temps de calcul en fonction de la taille de l'entrée augmente
+linéairement (en temps $O(n)$) au lieu d'augmenter quadratiquement \cite{dao2024}, mais elles
+excluent toute utilisation de fonctions non linéaires, qui sont pourtant essentielles pour garantir
+les performances de réseaux neuronaux profonds \cite{hornik1991}. La non linéarité doit donc être
+apportée \textit{autour} d'un bloc de calcul de la fonction SSM. Un modèle basé sur un bloc SSM est
+le modèle Mamba, illustré par la figure \ref{fig:mamba}.
 
 \begin{figure}[hbt!]
     \centering
@@ -645,7 +646,7 @@ transformateurs \cite{glorioso2024}.
 Les réseaux neuronaux ont été appliqués à plusieurs tâches en lien avec la métagénomique, mais les
 modèles actuels sont, en ce moment, à un stade de preuve de concept et ne sont pas utilisés en
 milieux cliniques \cite{roy2024}. On peut diviser ces modèles selon leur application à des analyses
-taxonomique ou fonctionnelle. Les réseaux neuronaux peuvent analyser des lectures (ou des contigs)
+taxonomique ou fonctionnelle. Les réseaux neuronaux peuvent analyser des lectures ou des contigs
 directement ou encore utiliser des K-mers extraits de lectures.
 
 \subsubsection{Analyse taxonomique}
@@ -681,11 +682,11 @@ CNN-RAI \cite{cnnrai2021} est un modèle de classification taxonomique qui utili
 convolutionnelles et l'indice d'abondance relative, une mesure qui estime l'importance de K-mers en
 fonction de leur fréquence dans une séquence en comparaison avec leur fréquence dans la majorité des
 séquences. Cette mesure est proche de l'indice TF-IDF (\textit{Term Frequency-Inverse Document
-Frequency}, ou fréquence de term - fréquence inverse de document), qui suppose qu'une sous-séquence
+Frequency}, ou fréquence de terme - fréquence inverse de document), qui suppose qu'une sous-séquence
 peu fréquente dans la plupart des séquences mais abondante dans une séquence particulière a
-davantage d'importance dans ce contexte. Les données pour l'indice d'abondance relative sont générées
-avec l'outil RAIphy \cite{nalbantoglu11}, un programme semi-supervisé de classification de fragments
-métagénomiques.
+davantage d'importance dans ce contexte. Les données pour l'indice d'abondance relative sont
+générées avec l'outil RAIphy \cite{nalbantoglu11}, un programme semi-supervisé de classification de
+fragments métagénomiques.
 
 RNN-VirSeeker \cite{liu2022} est un modèle d'identification des séquences de virus dans les
 métagénomes. Le modèle est basé sur un RNN et est entraîné sur des séquences de 500 nucléotides
@@ -702,11 +703,11 @@ MLM}) consiste à masquer des jetons de la séquence d'entrée et à calculer la
 déterminer la séquence originale. (2) La prédiction de phrase suivante (\textit{Next Sentence
 Prediction, NSP}) consiste à remplacer la seconde moitié d'une séquence par une séquence appartenant
 à un autre échantillon et de mesurer la capacité du modèle à déterminer si la séquence est tirée
-d'un seul échantillon. Le pré-entraînement n'incorpore aucune donnée taxonomique; il s'agit d'une
+d'un même échantillon. Le pré-entraînement n'incorpore aucune donnée taxonomique; il s'agit d'une
 phase non supervisée qui permet au modèle d'apprendre une représentation efficace des données
 d'entraînement. Lors de la phase d'ajustement, le modèle est utilisé pour prédire les taxons
 auxquels appartiennent les séquences. Ce modèle démontre des performances supérieures à DeepMicrobe
-et Kraken2.
+et Kraken2, mais demeure moins performance que MMSeqs 2.
 
 \subsubsection{Analyse fonctionnelle}
 

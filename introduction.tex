@@ -1,24 +1,20 @@
 \begin{introduction}
 \label{chapitre:introduction}
 
-Les technologies de séquençage d'ADN permettent aujourd'hui d'analyser de
-grandes quantités de matériel génétique. Alors que la première génération de
-technique de séquençage (à partir des années 1970) était limitée à un
-faible débit, les technologies de deuxième génération (aussi appelées
-<<nouvelle génération>> ou \textit{NGS}, à partir des années 2000) ont
-grandement augmenté la vitesse de séquençage mais demeuraient limitées à
-de courtes séquences d'au plus quelques centaines de nucléotides. Les
-technologies de troisième génération (à partir des années 2010) constituent
-une autre amélioration qui permet d'analyser des séquences encore plus longues,
-jusqu'à plusieurs milliers de nucléotides, encore plus rapidement \cite{satam2023}.
-Ces technologies ont contribué à améliorer nos connaissances en génomique et
-mené à des applications en biologie et médecine, par exemple, pour la
-détection de pathogènes, les diagnostics cliniques, la protection de
-l'environnement et l'agriculture \cite{liu2025}. De nombreux outils ont
-aussi été développés pour analyser les données de séquençage et faciliter le
-travail des chercheurs \cite{roy2024}. Ce mémoire s'intéresse en particulier à
-une application de l'analyse de séquences d'ADN, la classification taxonomique
-de métagénomes, qui vise à identifier les espèces présentes dans des microbiomes.
+Les technologies de séquençage d'ADN permettent aujourd'hui d'analyser de grandes quantités de
+matériel génétique. Alors que la première génération de technique de séquençage (à partir des années
+1970) était limitée à un faible débit, les technologies de deuxième génération (aussi appelées
+<<nouvelle génération>> ou \textit{NGS}, à partir des années 2000) ont grandement augmenté la
+vitesse de séquençage mais demeuraient limitées à de courtes séquences d'au plus quelques centaines
+de nucléotides. Les technologies de troisième génération (à partir des années 2010) constituent une
+autre amélioration qui permet d'analyser des séquences encore plus longues, jusqu'à plusieurs
+milliers de nucléotides, encore plus rapidement \cite{satam2023}. Ces technologies ont contribué à
+améliorer nos connaissances en génomique et mené à des applications en biologie et médecine, par
+exemple, pour la détection de pathogènes, les diagnostics cliniques, la protection de
+l'environnement et l'agriculture \cite{liu2025}. De nombreux outils ont aussi été développés pour
+analyser les données de séquençage et faciliter le travail des chercheurs \cite{roy2024}. Ce mémoire
+s'intéresse en particulier à une application de l'analyse de séquences d'ADN, la classification
+taxonomique de métagénomes, qui vise à identifier les espèces présentes dans des microbiomes.
 
 La métagénomique se heurte à des problèmes majeurs. Le \textbf{volume de données} complique les
 analyses. Un séquençage conventionnel de métagénome avec des technologies de troisième génération
@@ -38,60 +34,58 @@ chercheurs en erreur \cite{gihawi2023}. Il est donc impératif de développer de
 qui soient non seulement efficaces, mais aussi rigoureuses et facile à interpréter pour éviter
 d'autres scénarios du même genre.
 
-Ce mémoire vise à améliorer des techniques de classification taxonomique de
-données de séquençage métagénomique, ce qui implique les étapes principales
-suivantes :
+Ce mémoire vise à améliorer des techniques de classification taxonomique de données de séquençage
+métagénomique, ce qui implique les étapes principales suivantes :
 
-La \textbf{génération de données synthétiques} permet de créer des ensembles
-de données pour entraîner et valider les outils de classification. Les données
-doivent être générées à partir de séquences de haute qualité et représenter des
-échantillons métagénomiques variés pour éviter de surajuster les modèles et
-d'obtenir des performances non représentatives d'un cas d'utilisation réel.
+La \textbf{génération de données synthétiques} permet de créer des ensembles de données pour
+entraîner et valider les outils de classification. Les données doivent être générées à partir de
+séquences de haute qualité et représenter des échantillons métagénomiques variés pour éviter de
+surajuster les modèles et d'obtenir des performances non représentatives d'un cas d'utilisation
+réel.
 
-L'élaboration de \textbf{modèles de classification taxonomique} consiste à
-concevoir des réseaux neuronaux inédits pour améliorer les techniques
-existantes. Ces modèles doivent offrir des performances supérieures en terme
-d'utilisation de ressources informatiques (temps de calcul et utilisation de
-la mémoire) et de classification (précision plus élevée).
+L'élaboration de \textbf{modèles de classification taxonomique} consiste à concevoir des réseaux
+neuronaux inédits pour améliorer les techniques existantes. Ces modèles doivent offrir des
+performances supérieures en terme d'utilisation de ressources informatiques (temps de calcul et
+utilisation de la mémoire) et de classification (précision plus élevée).
 
-L'\textbf{entraînement des modèles} consiste à modifier automatiquement les
-paramètres des modèles pour leur permettre d'effectuer les classifications
-taxonomiques. Cette étape requiert des ressources intensive et doit s'appuyer
-sur de bons hyperparamètres pour converger vers une solution efficace. Un
-entraînement mal configuré peut faire échouer le modèle à apprendre des
-paramètres efficaces et ainsi causer un gaspillage de ressources.
+L'\textbf{entraînement des modèles} consiste à modifier automatiquement les paramètres des modèles
+pour leur permettre d'effectuer les classifications taxonomiques. Cette étape requiert des
+ressources intensive et doit s'appuyer sur de bons hyperparamètres pour converger vers une solution
+efficace. Un entraînement mal configuré peut faire échouer le modèle à apprendre comment résoudre
+une tâche et ainsi causer un gaspillage de ressources \cite{liu-etal-2020-understanding}.
 
-L'approche de ce projet consiste à répertorier des architectures de réseaux
-neuronaux utilisés en métagénomique et encore non appliqués à la métagénomique
-qui ont le potentiel d'offrir de meilleures performances.
-Après la sélection des modèles, le processus d'entraînement est ajusté pour
-chaque modèle afin de maximiser leurs performances. Les hyperparamètres sont
-modifiés et différentes techniques d'entraînement sont testées pour déterminer
-les meilleures manières d'obtenir une classification de haute qualité.
-Tous les modèles sont ensuite testés avec les mêmes données de test et
-d'entraînement pour identifier les modèles les plus efficaces. On compare
-aussi les nouveaux modèles développés dans le cadre de ce projet avec des
-techniques de classification développées par d'autres équipes de chercheurs
-pour confirmer que les nouveaux modèles constituent bel et bien des amélioration
-par rapport aux outils déjà existants.
+Ce projet consiste à répertorier des architectures de réseaux neuronaux utilisés en métagénomique et
+encore non appliqués à la métagénomique qui ont le potentiel d'offrir de meilleures performances.
+Après la sélection des modèles, le processus d'entraînement est ajusté pour chaque modèle afin de
+maximiser leurs performances. Les hyperparamètres sont modifiés et différentes techniques
+d'entraînement sont testées pour déterminer les meilleures manières d'obtenir une classification de
+haute qualité. Tous les modèles sont ensuite testés avec les mêmes données de test et d'entraînement
+pour identifier les modèles les plus efficaces. On compare aussi les nouveaux modèles développés
+dans le cadre de ce projet avec des techniques de classification développées par d'autres équipes de
+chercheurs pour confirmer que les nouveaux modèles constituent bel et bien des amélioration par
+rapport aux outils déjà existants.
 
 Ce mémoire présente les contributions principales suivantes :
 
 \begin{list}{$\bullet$}{}
-    \item Comparaison systématique de différentes architectures de réseaux neuronaux pour la classification taxonomique de données métagénomique, en particulier une comparaison approfondie entre les transformateurs et les modèles à espace d'état (SSM).
-    \item Étude des effets du pré-entraînement et de l'ajustement sur les performances des modèles de classification.
-    \item Étude des effets du prétraitement des données de séquençage (jetonisation et traitement par CNN) sur les performances des modèles de classification.
-    \item Conception de modèles de réseaux neuronaux inédits spécifiquement développés pour la classification taxonomique.
+    \item Comparaison systématique de différentes architectures de réseaux neuronaux pour la
+        classification taxonomique de données métagénomique, en particulier une comparaison
+        approfondie entre les transformateurs et les modèles à espace d'état (SSM).
+    \item Étude des effets du pré-entraînement et de l'ajustement sur les performances des modèles
+        de classification.
+    \item Étude des effets du prétraitement des données de séquençage (jetonisation et traitement
+        par CNN) sur les performances des modèles de classification.
+    \item Conception de modèles de réseaux neuronaux inédits spécifiquement développés pour la
+        classification taxonomique.
+    \item Analyse de la consommation de ressources informatique par les modèles d'AA.
     \item Publication du code source ouvert pour répliquer tous les résultats du projet.
 \end{list}
 
-Ce mémoire comporte quatre sections principales.
-Le chapitre 1 présente un état de l'art des outils d'analyse de données
-métagénomique ainsi que de l'apprentissage profond, avec un accent particulier
-sur les réseaux neuronaux dédiés aux analyses de données génomiques. Le
-chapitre 2 explique la méthodologie du projet : collecte et
-transformation des données, conception des modèles, entraînement et évaluation.
-Le chapitre 3 présente les résultats des modèles. Le chapitre 4
-discute des résultats et propose des améliorations possibles aux nouveaux modèles.
+Ce mémoire comporte quatre sections principales. Le chapitre 1 présente un état de l'art des outils
+d'analyse de données métagénomique ainsi que de l'apprentissage profond, avec un accent particulier
+sur les réseaux neuronaux dédiés aux analyses de données génomiques. Le chapitre 2 explique la
+méthodologie du projet : collecte et transformation des données, conception des modèles,
+entraînement et évaluation. Le chapitre 3 présente les résultats des modèles. Le chapitre 4 discute
+des résultats et propose des améliorations possibles aux nouveaux modèles.
 
 \end{introduction}
