@@ -100,11 +100,11 @@
         <mxCell id="n1XjDzg_3K_Z_bN2cZZr-95" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Bloc Mamba lent" vertex="1">
           <mxGeometry height="20" width="110" x="238.75" y="157" as="geometry" />
         </mxCell>
-        <mxCell id="n1XjDzg_3K_Z_bN2cZZr-96" edge="1" parent="1" source="n1XjDzg_3K_Z_bN2cZZr-51" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.501;entryY=-0.1;entryDx=0;entryDy=0;entryPerimeter=0;" target="n1XjDzg_3K_Z_bN2cZZr-94">
+        <mxCell id="n1XjDzg_3K_Z_bN2cZZr-96" edge="1" parent="1" source="n1XjDzg_3K_Z_bN2cZZr-51" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="n1XjDzg_3K_Z_bN2cZZr-94">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="293.5" y="127" />
-              <mxPoint x="158.5" y="127" />
+              <mxPoint x="294" y="127" />
+              <mxPoint x="159" y="127" />
             </Array>
           </mxGeometry>
         </mxCell>

@@ -300,28 +300,28 @@ notation employée par \cite{vapnik1995}, on définit :
         Y = \{y_1, y_2, y_3, ... \}, \text{Valeurs cibles pour chaque vecteur à classifier} \\
         \alpha, \text{Un ensemble de paramètres à déterminer} \\
         f(x, \alpha), \text{Une fonction qui cherche à prédire $y_i$} \\
-        \hat{Y} = \{\hat{y}_1, \hat{y}_2, \hat{y}_3, ... \}, \text{Valeurs prédites par $f(x, \alpha)$ pour chaque $x_i$}
+        \hat{Y} = \{\hat{y}_1, \hat{y}_2, \hat{y}_3, ... \}, \text{Valeurs prédites par $f(x, \alpha)$ pour chaque $x_i$}.
     \end{cases}
 \end{equation}
 
 On suppose que les valeurs cibles sont tirées d'une distribution inconnue $F(y_i | x_i)$. On mesure
 l'écart entre une valeur cible attendue, $y$, et une valeur cible prédite, $f(x, \alpha)$, au moyen
 d'une fonction de perte $L(y, f(x, \alpha))$. Afin de choisir les meilleurs paramètres pour
-approximer au mieux la distribution $F(y_i | x_i)$, on doit minimiser l'équation \ref{eq:risque}.
+approximer au mieux la distribution $F(y_i | x_i)$, on doit minimiser l'équation \ref{eq:risque} :
 
 \begin{equation}
     \label{eq:risque}
     \begin{split}
         R(\alpha) &= \int L(y, f(x, \alpha)) dF(x, y) \\
-                  &= \frac{1}{k} \sum_{i=1}^{k} L(y_i, f(x_i, \alpha)) \;\;\; \text{(pour des valeurs discrètes)}
+                  &= \frac{1}{k} \sum_{i=1}^{k} L(y_i, f(x_i, \alpha)) \;\;\; \text{(pour des valeurs discrètes)}.
     \end{split}
 \end{equation}
 
-Par conséquent, les paramètres optimaux $\alpha^*$ sont obtenus par l'équation \ref{eq:minim_risque}.
+Par conséquent, les paramètres optimaux $\alpha^*$ sont obtenus par l'équation \ref{eq:minim_risque} :
 
 \begin{equation}
     \label{eq:minim_risque}
-    \alpha^* = \arg \min_{\alpha} \frac{1}{k} \sum_{i=1}^{k} L(y_i, f(x_i, \alpha))
+    \alpha^* = \arg \min_{\alpha} \frac{1}{k} \sum_{i=1}^{k} L(y_i, f(x_i, \alpha)).
 \end{equation}
 
 L'apprentissage supervisé vise principalement les problèmes de classification et de régression, pour
@@ -338,7 +338,7 @@ modélisent les propriétés d'une distribution $F(x)$. Cette approche comprend 
 
 Le regroupement de données par classes (\textit{data clustering}) consiste à assigner à chaque
 donnée $X = \{x_1, x_2, ..., x_n\}$ une classe $S = \{s_1, s_2, ..., s_k\}$ en minimisant la variance
-intra-classe, donnée par l'équation \ref{eq:groupement}
+intra-classe, donnée par l'équation \ref{eq:groupement} :
 
 \begin{equation}
     \label{eq:groupement}
@@ -349,11 +349,11 @@ où $\mu_i$ désigne le centroïde des données dans la classe $s_i$.
 
 La compression de données vise à minimiser l'erreur de reconstruction entre l'entrée $x$ et une
 version $\hat{x}$ reconstruite après compression, tel qu'indiqué par l'équation
-\ref{eq:compression}.
+\ref{eq:compression} :
 
 \begin{equation}
     \label{eq:compression}
-    \alpha^* = arg min_{\alpha} \sum_{i = 1}^{n} \left[ x_i - g_\alpha (f_\alpha (x_i)) \right]^2
+    \alpha^* = arg min_{\alpha} \sum_{i = 1}^{n} \left[ x_i - g_\alpha (f_\alpha (x_i)) \right]^2.
 \end{equation}
 
 L'apprentissage non supervisé permet d'extraire des propriétés de données non étiquetées, ce qui est
@@ -368,16 +368,16 @@ fonction qui comporte une perte supervisée et une perte de régulation non supe
 \cite{chapelle2006}.
 
 \subsubsection{Apprentissage auto-supervisé}
-L'apprentissage auto-supervisé \cite{doersch2017} est une phase préparatoire de l'apprentissage
-supervisé ou non supervisé qui consiste à entraîner un modèle à reconnaître les signaux les plus
-utiles dans les données, ce qui permet d'augmenter les performances lors de la phase principale
-d'entraînement.
+L'apprentissage auto-supervisé est une phase préparatoire de l'apprentissage supervisé ou non
+supervisé qui consiste à entraîner un modèle à reconnaître les signaux les plus utiles dans les
+données, ce qui permet d'augmenter les performances lors de la phase principale d'entraînement
+\cite{doersch2017}.
 
 \subsubsection{Apprentissage par renforcement}
 L'apprentissage par renforcement \cite{sutton2018} diffère des autres approches parce qu'elle
 consiste à laisser un modèle interagir dynamiquement avec un autre système pour apprendre à résoudre
 une tâche. Cette approche est peu fréquente en métagénomique parce que les analyses de séquences
-sont basées sur des données non dynamiques.
+sont basées sur des données non dynamiques \cite{roy2024}.
 
 \subsection{Réseaux neuronaux}
 Les réseaux neuronaux, aussi appelés réseaux de neurones artificiels, sont une famille de
@@ -386,11 +386,11 @@ inspirées des neurones biologiques \cite{goodfellow2016}.
 
 \subsubsection{Entraînement}
 
-L'équation \ref{eq:neurone} montre la modélisation mathématique d'un neurone artificiel.
+L'équation \ref{eq:neurone} montre la modélisation mathématique d'un neurone artificiel :
 
 \begin{equation}
     \label{eq:neurone}
-    z = f \left( \sum_{i = 1}^{n} w_i x_i + b \right)
+    z = f \left( \sum_{i = 1}^{n} w_i x_i + b \right),
 \end{equation}
 
 où $z$ est la valeur de sortie du neurone, $x_i$ est une valeur d'entrée, $w_i$ est un paramètre
@@ -412,7 +412,7 @@ par une flèche), $w_i$ comme un paramètre ajustable associé à chaque entrée
 paramètre ajustable distinct des entrées. On dénombre ainsi, pour chaque couche cachée comportant
 $n$ neurones, $n^2$ poids et $n$ biais. Un réseau neuronal comportant plusieurs couches cachées
 est dit \textit{profond} \cite{lecun2015}. La sortie $\mathbf{h}$ d'une couche de $n$ neurones
-recevant un vecteur d'entrées $\mathbf{x}$ de $m$ valeurs est
+recevant un vecteur d'entrées $\mathbf{x}$ de $m$ valeurs est :
 
 \begin{equation}
     \label{eq:propagation_avant}
@@ -421,40 +421,40 @@ recevant un vecteur d'entrées $\mathbf{x}$ de $m$ valeurs est
 
 L'équation \ref{eq:propagation_avant} calcule la propagation avant du réseau. On compare la sortie
 finale du réseau avec un résultat cible $\mathbf{y}_{k \times 1}$ au moyen d'une fonction de coût
-\ref{eq:cout} qui quantifie l'erreur du réseau.
+\ref{eq:cout} qui quantifie l'erreur du réseau :
 
 \begin{equation}
     \label{eq:cout}
-    C(y, \hat{y}) = \sum_{i=1}^{k} L(y_i, \hat{y})
+    C(y, \hat{y}) = \sum_{i=1}^{k} L(y_i, \hat{y}),
 \end{equation}
 
 où $L( \cdot )$ est une fonction de perte, par exemple, $L(y_i, \hat{y}) = (y - \hat{y})^2$. La
 rétropropagation consiste à calculer l'erreur associée à chaque neurone pour ajuster les paramètres
 de façon à minimiser le coût. L'erreur $e_i^{(n)}$ du neurone $j$ de la couche $n$ est donnée par
-l'équation \ref{eq:partiel}.
+l'équation \ref{eq:partiel} :
 
 \begin{equation}
     \label{eq:partiel}
-    e_i^{(n)} = \frac{\partial C}{\partial h_i^{(n)}}
+    e_i^{(n)} = \frac{\partial C}{\partial h_i^{(n)}}.
 \end{equation}
 
 Par la règle de la dérivée en chaîne, on calcule l'erreur associée à un neurone d'une couche
-précédente avec l'équation \ref{eq:retropropagation}.
+précédente avec l'équation \ref{eq:retropropagation} :
 
 \begin{equation}
     \label{eq:retropropagation}
-    e_j^{(n - 1)} = f\prime^{(n - 1)} (h_j^{(n - 1)}) \sum_i w_{ij}^{(n)} e_i^{(n)}
+    e_j^{(n - 1)} = f\prime^{(n - 1)} (h_j^{(n - 1)}) \sum_i w_{ij}^{(n)} e_i^{(n)}.
 \end{equation}
 
 On propage l'erreur jusqu'à la couche initiale du réseau. Ce processus se nomme rétropropagation et
 permet d'obtenir une erreur pour chaque neurone, laquelle sert à ajuster les paramètres par
-l'équation \ref{eq:ajustement}.
+l'équation \ref{eq:ajustement} :
 
 \begin{equation}
     \label{eq:ajustement}
     \begin{split}
         w_{ij}^{(n)} &= w_{ij}^{(n)} - \lambda \cdot e_i^{(n)} x_i^{(n - 1)} \\
-        b_i^{(n)} &= b_i^{(n)} - \lambda \cdot e_i^{(n)} \\
+        b_i^{(n)} &= b_i^{(n)} - \lambda \cdot e_i^{(n)}, \\
     \end{split}
 \end{equation}
 
@@ -514,20 +514,20 @@ d'analyser les dépendances entre les éléments d'une séquence.
 Les transformateurs forment une famille d'architectures développées à partir de 2017 basées sur
 l'attention multi-tête \cite{transformer}. L'entrée du modèle est une matrice $X_{n \times d_m}$, où
 $n$ est la longueur de la séquence et $d_m$ est la taille du vecteur de plongement pour chaque
-élément de la séquence. L'équation \ref{eq:autoattention} présente le mécanisme d'auto-attention.
+élément de la séquence. L'équation \ref{eq:autoattention} présente le mécanisme d'auto-attention :
 
 \begin{equation}
     \label{eq:autoattention}
-    \text{Attention}(Q, K, V) = \left( \frac{QK^T}{\sqrt{d_k}} V \right)
+    \text{Attention}(Q, K, V) = \left( \frac{QK^T}{\sqrt{d_k}} V \right),
 \end{equation}
 
 où $Q = XW^Q$, $K = XW^K$ et $V = XW^V$. Les termes $W$ désignent des matrices de paramètres de
 dimension $(d_m \times d_k)$, où $d_k$ est la dimension de projection.  L'équation
-\ref{eq:attention-multitete} présente le mécanisme d'attention multitête.
+\ref{eq:attention-multitete} présente le mécanisme d'attention multitête :
 
 \begin{equation}
     \label{eq:attention-multitete}
-    \text{Attention Multitête}(Q, K, V) = Concat\left( t_1, t_2, ..., t_h \right) W^O
+    \text{Attention Multitête}(Q, K, V) = Concat\left( t_1, t_2, ..., t_h \right) W^O,
 \end{equation}
 
 où $t_i$ est un mécanisme d'auto-attention tel que réalisé par l'équation \ref{eq:autoattention}
@@ -540,7 +540,7 @@ transformateur complète.
 
 \begin{figure}[hbt!]
     \centering
-    \includegraphics[width=0.7\linewidth]{figures/transformateur.pdf}
+    \includegraphics[width=0.9\linewidth]{figures/transformateur.pdf}
     \caption{Diagramme d'un transformateur encodeur seul}
     \label{fig:transformateur}
 \end{figure}
@@ -569,25 +569,25 @@ conventionnels.
 \subsubsection{Réseau neuronal à espace d'états}
 Les réseaux neuronaux à espace d'états (SSM) sont une catégorie de modèles développés à partir de
 2021 qui produisent une sortie $y(t)$ à partir d'un espace latent caché $h(t)$ obtenu d'une entrée
-$x(t)$ \cite{gu2024} comme le montre l'équation \ref{eq:ssm}.
+$x(t)$ \cite{gu2024} comme le montre l'équation \ref{eq:ssm} :
 
 \begin{equation}
     \label{eq:ssm}
     \begin{split}
         h^\prime (t) &= Ah(t) + Bx(t) \\
-        y(t) &= Ch(t)
+        y(t) &= Ch(t),
     \end{split}
 \end{equation}
 
 où $A$ est la matrice d'évolution qui contrôle la sélection des données à préserver dans l'espace
 latent et $B$ ainsi que $C$ sont des projections d'entrée et de sortie. On discrétise l'équation
-\ref{eq:ssm} pour obtenir l'équation \ref{eq:ssm_discrete}.
+\ref{eq:ssm} pour obtenir l'équation \ref{eq:ssm_discrete} :
 
 \begin{equation}
     \label{eq:ssm_discrete}
     \begin{split}
         h_t &= \overline{A} h_{t-1} + \overline{B} x_t \\
-        y_t &= \overline{C} h_t
+        y_t &= \overline{C} h_t,
     \end{split}
 \end{equation}
 
@@ -620,21 +620,22 @@ le modèle Mamba, illustré par la figure \ref{fig:mamba}.
 
 \begin{figure}[hbt!]
     \centering
-    \includegraphics[width=0.9\linewidth]{figures/mamba.pdf}
+    \includegraphics[width=\linewidth]{figures/mamba.pdf}
     \caption{Diagramme d'un modèle Mamba}
     \label{fig:mamba}
 \end{figure}
 
 Dans la figure \ref{fig:mamba}, la non linéarité est apportée par les fonctions d'activation dans
 les blocs de projection non linéaires, les fonctions d'activation SiLU et le bloc de convolution.
-Ces opérateurs mélangent les données et permettent au bloc SSM de mieux les analyser. Les auteurs de
-Mamba \cite{gu2024} rapportent des performances supérieurs à des transformateurs de taille similaire
-pour des tâches de modélisation des langues naturelles, analyse de séquences d'ADN et modélisation
-de données audios. Ces performances s'expliquent par la sélectivité du bloc SSM. En compressant
-l'espace latent, Mamba sélectionne les données les plus importantes pour la tâche à réaliser,
-contrairement aux transformateurs linéaires qui le compressent sans discernement. Pour la première
-fois, un modèle de complexité linéaire (Mamba) peut ainsi égaler un modèle de complexité quadratique
-(le transformateur conventionnel).
+Ces opérateurs mélangent les données et permettent au bloc SSM de mieux les analyser. Les blocs
+marqués << PL >> représentent des projections linéaires. Les auteurs de Mamba \cite{gu2024}
+rapportent des performances supérieurs à des transformateurs de taille similaire pour des tâches de
+modélisation des langues naturelles, analyse de séquences d'ADN et modélisation de données audios.
+Ces performances s'expliquent par la sélectivité du bloc SSM. En compressant l'espace latent, Mamba
+sélectionne les données les plus importantes pour la tâche à réaliser, contrairement aux
+transformateurs linéaires qui le compressent sans discernement. Pour la première fois, un modèle de
+complexité linéaire (Mamba) peut ainsi égaler un modèle de complexité quadratique (le transformateur
+conventionnel).
 
 Le modèle Mamba peut être entraîné plus rapidement que les transformateurs, mais puisqu'il est basé
 sur un espace latent qui compresse le contexte d'une séquence, il ne dispose pas d'un contexte

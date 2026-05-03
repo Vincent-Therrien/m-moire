@@ -5,11 +5,11 @@ données métagénomiques.
 
 \section{Bases de données}
 \label{chapitre:2:bases_de_donnes}
-Les modèles sont entraînés et validés à partir de trois bases de données.
+Les modèles sont entraînés et validés à partir de quatre bases de données.
 
 \begin{enumerate}
     \item RefSeq \cite{refseq} est une base de données de séquences biologiques de haute qualité
-        et non redondante. Ces séquences sont utilisées pour générer des données synthétiques afin
+        et non redondantes. Ces séquences sont utilisées pour générer des données synthétiques afin
         de simuler des échantillons métagénomiques réels.
     \item L'ensemble de données généré par BERTax à partir de RefSeq \cite{mock2022} est composé
         de lectures synthétiques de $1500$ nucléotides. Les lectures sont réparties dans les trois
@@ -30,7 +30,7 @@ des matrices numériques, il est nécessaire de transformer ces données en un a
 L'encodage d'abondance de K-mer consiste à mesurer la fréquence de K-mers dans une séquence. On
 obtient un dictionnaire qui associe à chaque K-mer une fréquence relative. Cette représentation
 entraîne une perte de données en lien avec l'ordonnancement des nucléotides et ne retient que les
-fréquences relative de sous-séquences. Il s'agit néanmoins d'une représentation efficace pour les
+fréquences relative de sous-séquences. Il s'agit néanmoins d'une représentation utiles pour des
 modèles simples.
 
 \subsection{Jetonisation}
@@ -43,7 +43,7 @@ nucléotides.
 
 \subsection{1 parmi N}
 L'encodage 1 parmi N assigne un vecteur orthogonal à chaque type de nucléotides, comme le montre
-l'équation \ref{eq:1_parmi_n}.
+l'équation \ref{eq:1_parmi_n} :
 
 \begin{equation}
     \label{eq:1_parmi_n}
@@ -51,7 +51,7 @@ l'équation \ref{eq:1_parmi_n}.
         A &= [1, 0, 0, 0] \\
         C &= [0, 1, 0, 0] \\
         G &= [0, 0, 1, 0] \\
-        T &= [0, 0, 0, 1]
+        T &= [0, 0, 0, 1].
     \end{split}
 \end{equation}
 
@@ -210,7 +210,7 @@ qu'à la fin ou au milieu. La figure \ref{fig:mamba_parallele} présente cette a
 
 \begin{figure}[hbt!]
     \centering
-    \includegraphics[width=0.7\linewidth]{figures/mamba_dual.pdf}
+    \includegraphics[width=\linewidth]{figures/mamba_dual.pdf}
     \caption{Diagramme d'un modèle Mamba avec flux parallèles}
     \label{fig:mamba_parallele}
 \end{figure}
@@ -231,7 +231,7 @@ de l'entrée pour réduire le temps de calcul.
 
 \begin{figure}[hbt!]
     \centering
-    \includegraphics[width=0.7\linewidth]{figures/mamba_cnn.pdf}
+    \includegraphics[width=0.65\linewidth]{figures/mamba_cnn.pdf}
     \caption{Diagramme d'un modèle Mamba avec prétraitement par CNN}
     \label{fig:mamba_cnn}
 \end{figure}
@@ -292,22 +292,22 @@ un taxon cible $y \in [0, C]$, où $C$ désigne le nombre de classes avec $C > 2
 fonctions de perte.
 
 La perte d'entropie croisée (EC) \cite{lecun2015} est donnée par l'équation
-\ref{eq:entropie_croisee}.
+\ref{eq:entropie_croisee} :
 
 \begin{equation}
-    EC = - \frac{1}{N} \sum_{i=1}^N \sum_{j=1}^C \left( y_{i, j} log(p_{i, j}) \right)
+    EC = - \frac{1}{N} \sum_{i=1}^N \sum_{j=1}^C \left( y_{i, j} log(p_{i, j}) \right),
     \label{eq:entropie_croisee}
 \end{equation}
 
 où $N$ est le nombre d'échantillons, $C$ est le nombre de classes, $p_{i, j}$ est la probabilité
 prédite par le modèle qu'un échantillon $i$ appartienne à la classe $j$ et $y_{i, j}$ est donné
-par l'équation \ref{eq:entropie_croisee_2}.
+par l'équation \ref{eq:entropie_croisee_2} :
 
 \begin{equation}
     y_{i, j} =
     \begin{cases}
         1 \;\; si \; i = j \\
-        0 \;\; si \; i \neq j \\
+        0 \;\; si \; i \neq j. \\
     \end{cases}
     \label{eq:entropie_croisee_2}
 \end{equation}
@@ -315,27 +315,29 @@ par l'équation \ref{eq:entropie_croisee_2}.
 La perte focale (PF) est une modification de l'entropie croisée spécifiquement conçue pour les jeux
 de données déséquilibrées, ce qui signifie que certaines classes comprennent significativement plus
 d'échantillons que d'autres, par exemple, par un facteur de $1$ pour $1000$ \cite{pf2017}. La perte
-focale pour un problème de classification binaire est donnée par l'équation \ref{eq:perte_focale}.
+focale pour un problème de classification binaire est donnée par l'équation \ref{eq:perte_focale} :
 
 \begin{equation}
-    PF = -\alpha (1 - p_t)^\gamma log(p_t)
+    PF = -\alpha (1 - p_t)^\gamma log(p_t),
     \label{eq:perte_focale}
 \end{equation}
 
 où $\alpha$ et $\gamma$ sont des paramètres d'ajustement et $p_t$ est donné par l'équation
-\ref{eq:pf_2}.
+\ref{eq:pf_2} :
 
 \begin{equation}
     p_t =
     \begin{cases}
         p \;\; &si \; y = 1 \\
-        1 - p \;\; &si \; y = 0\\
+        1 - p \;\; &si \; y = 0. \\
     \end{cases}
     \label{eq:pf_2}
 \end{equation}
 
-On utilise l'optimiseur Adam et on applique un plafond de $1$ aux valeurs des paramètres pour
-minimiser le surajustement.
+On utilise l'optimiseur Adam \cite{adam2017} et on applique un plafond de $1$ aux valeurs des
+paramètres pour minimiser le surajustement. Pour le jeu de donnée 2, on ajoute un amortissement du
+taux d'apprentissage pour ralentir la vitesse de modification de paramètres à partir de la dixième
+époque.
 
 \subsection{Entraînement semi-supervisé}
 On utilise la modélisation masquée de langue (\textit{Masked Language Modeling, MLM}) pour
@@ -346,10 +348,10 @@ Le MLM consiste à remplacer aléatoirement des jetons de l'entrée en jeton sp�
 modèle doit déterminer les jetons présents à l'origine dans la séquence. On masque $15\%$ des jetons
 et on calcule la perte avec la fonction d'entropie croisée. Pour suivre l'amélioration des
 performances des modèles durant l'entraînement, on calcule l'entropie de la sortie, donnée par
-l'équation \ref{eq:entropie}.
+l'équation \ref{eq:entropie} :
 
 \begin{equation}
-    H(p, \hat{p}) = - \sum{i=1}^N \sum_{j=1}^V p_{i, j} log(\hat{p}_{i, j})
+    H(p, \hat{p}) = - \sum{i=1}^N \sum_{j=1}^V p_{i, j} log(\hat{p}_{i, j}),
     \label{eq:entropie}
 \end{equation}
 
@@ -393,15 +395,15 @@ $P$. On dit d'une prediction qu'elle est :
 On définit ensuite les métriques suivantes :
 
 \begin{equation}
-    \text{Précision} = \frac{\text{Nombre de VP}}{\text{Nombre de VP} + \text{Nombre de FP}}
+    \text{Précision} = \frac{\text{Nombre de VP}}{\text{Nombre de VP} + \text{Nombre de FP}},
 \end{equation}
 
 \begin{equation}
-    \text{Rappel} = \frac{\text{Nombre de VP}}{\text{Nombre de VP} + \text{Nombre de FN}}
+    \text{Rappel} = \frac{\text{Nombre de VP}}{\text{Nombre de VP} + \text{Nombre de FN}},
 \end{equation}
 
 \begin{equation}
-    \text{Mesure F} = 2 \times \frac{\text{Précision} \times \text{Rappel}}{\text{Précision} + \text{Rappel}}
+    \text{Mesure F} = 2 \times \frac{\text{Précision} \times \text{Rappel}}{\text{Précision} + \text{Rappel}}.
 \end{equation}
 
 Ces métriques s'appliquent à des problèmes de classification binaire. Or, la classification
@@ -449,7 +451,7 @@ La tableau \ref{tableau:methodes-resume} présente un résumé des modèles test
 Nom du modèle & Encodage & Fonctionnement \\
 \hline
 Modèle aléatoire & N/A & Modèle de base \\
-Forêt aléatoire & K-mers & Ensemble d'arbres décisionnels. Modèle classique peu performant. \\
+Forêt aléatoire & K-mers & Ensemble d'arbres décisionnels. Modèle classique utilisé comme référence. \\
 MLP & 1 parmi N & Perceptron multicouche, réseau neuronal simple \\
 CNN & 1 parmi N & Modèle basé sur la convolution \\
 AED & 1 parmi N & Autoencodeur débruiteur, modèle basé sur la compression efficace des séquences \\

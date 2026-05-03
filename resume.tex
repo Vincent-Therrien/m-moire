@@ -1,31 +1,31 @@
 \begin{abstract}
-Le séquençage d'ADN rapide permet d'analyser une grande quantité de matériel
-génomique, ce qui ouvre la voie à de multiples applications en biologie et
-médecine. Néanmoins, l'analyse d'un volume de plus en plus grand de données 
-génomiques requiert des ressources informatiques et un temps de calcul massifs,
-d'où l'importance de développer des outils d'analyse efficaces.
+Le séquençage d'ADN rapide rend possible de nouvelles applications en biologie et en médecine.
+Néanmoins, l'analyse d'un volume de plus en plus grand de données génomiques requiert des ressources
+informatiques et un temps de calcul massifs, d'où l'importance de développer des outils d'analyse
+efficaces.
 
-La métagénomique étudie le matériel génétique prélevé dans les microbiomes,
-des communautés de microorganismes qui vivent dans des habitats très variés
-comme le sol, l'eau, le système digestif humain et d'autres environnements.
-Une meilleure compréhension des microbiomes est nécessaire pour améliorer
-notre capacité à les caractériser, ce qui aiderait à détecter les pathogènes
-plus efficacement, par exemple. Une méthode répandue pour analyser des
-métagénomes consiste à comparer des séquences d'ADN
-prélevées dans un environnement avec des bases de données contenant des
-génomes de référence. Cette approche est toutefois lente et limitée
-par la qualité des bases de données. Une technique plus récente et plus flexible
-consiste à entraîner des réseaux neuronaux pour identifier les espèces présentes
-dans un métagénome, mais elle requiert un temps d'entraînement important et
-comporte des difficultés en lien avec l'interprétation des résultats.
+La métagénomique étudie le matériel génétique prélevé dans les microbiomes, des communautés de
+microorganismes qui vivent dans des habitats très variés comme le sol, l'eau, le système digestif
+humain et d'autres environnements. Une meilleure compréhension des microbiomes est nécessaire pour
+améliorer notre capacité à les caractériser, ce qui aiderait à détecter les pathogènes plus
+efficacement ou mieux caractériser les sols en agriculture, par exemple. Une méthode répandue pour
+analyser des métagénomes consiste à comparer des séquences d'ADN prélevées dans un environnement
+avec des bases de données contenant des génomes de référence. Cette approche est toutefois lente et
+limitée par la qualité des bases de données. Une technique plus récente et plus flexible consiste à
+entraîner des réseaux neuronaux pour identifier les espèces présentes dans un métagénome, mais elle
+requiert un temps d'entraînement important et comporte des difficultés en lien avec l'interprétation
+des résultats.
 
-Ce mémoire présente de nouvelles techniques de classification taxonomique des
-séquences d'ADN métagénomique, ce qui consiste à catégoriser les organismes
-dans des groupes génétiquement apparentés. Les techniques présentées demandent
-moins de ressources et de temps d'entraînement que les réseaux neuronaux
-précédemment développés pour cette tâche et livrent des performances supérieures
-pour certaines évaluations. Les nouveaux modèles combinent des modèles SSM avec
-un traitement des données basé sur des réseaux convolutionnels et une analyse
-de plusieurs flux de données en parallèle.
+Ce mémoire présente de nouvelles techniques de classification taxonomique des séquences d'ADN
+métagénomique, ce qui consiste à catégoriser les organismes dans des groupes génétiquement
+apparentés. Les techniques sont basées sur le modèle Mamba, un modèle à espace d'états, ainsi que
+des variantes modifiées par un traitement parallèle en flux (Mamba-Dual), un pré-traitement par CNN
+(Mamba-CNN), et une combinaison des deux améliorations (Mamba-Dual-CNN). Sur des ensembles de
+séquences d'ADN génétiquement diversifiées, Mamba-Dual-CNN classifie les données avec une précision
+moyenne de $89,97\%$, ce qui se compare favorablement à un transformateur de taille similaire
+($72,46\%$), le modèle BERTax ($86,88\%$) et les outils MMSeqs 2 ($88,20\%$) ainsi que Kraken 2
+($75,51\%$). La durée d'entraînement des modèles à espace d'états testés est outre moins longue
+qu'un transformateur de taille similaire, avec $0,164\;s$ pour un pas avec Mamba-Dual-CNN contre
+$0,188\;s$ pour le transformateur.
 
 \end{abstract}
